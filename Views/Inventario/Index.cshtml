@@ -1,0 +1,36 @@
+@model List<MokkilicoresExpress.Models.Inventario>
+
+<h1>Inventario</h1>
+<p>
+    <a href="@Url.Action("Create", "Inventario")">Crear Nuevo Artículo</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cantidad en Existencia</th>
+            <th>ID Bodega</th>
+            <th>Fecha Ingreso</th>
+            <th>Fecha Vencimiento</th>
+            <th>Tipo de Licor</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.CantidadEnExistencia</td>
+            <td>@item.BodegaId</td>
+            <td>@item.FechaIngreso.ToShortDateString()</td>
+            <td>@item.FechaVencimiento.ToShortDateString()</td>
+            <td>@item.TipoLicor</td>
+            <td>
+                <a href="@Url.Action("Edit", "Inventario", new { id = item.Id })">Editar</a> |
+                <a href="@Url.Action("Delete", "Inventario", new { id = item.Id })" onclick="return confirm('¿Estás seguro de querer eliminar este artículo?');">Eliminar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

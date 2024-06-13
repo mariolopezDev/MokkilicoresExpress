@@ -28,3 +28,4 @@
 /Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/obj/Debug/net8.0/MokkilicoresExpress.pdb
 /Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/obj/Debug/net8.0/MokkilicoresExpress.genruntimeconfig.cache
 /Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/obj/Debug/net8.0/ref/MokkilicoresExpress.dll
+/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/obj/Debug/net8.0/MokkilicoresExpress.sourcelink.json

@@ -1,0 +1,40 @@
+@model MokkilicoresExpress.Models.Inventario
+
+<h1>Editar Artículo de Inventario</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label for="CantidadEnExistencia">Cantidad en Existencia</label>
+        <input asp-for="CantidadEnExistencia" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="BodegaId">ID Bodega</label>
+        <input asp-for="BodegaId" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="FechaIngreso">Fecha de Ingreso</label>
+        <input asp-for="FechaIngreso" class="form-control" type="date" required>
+    </div>
+    <div class="form-group">
+        <label for="FechaVencimiento">Fecha de Vencimiento</label>
+        <input asp-for="FechaVencimiento" class="form-control" type="date" required>
+    </div>
+    <div class="form-group">
+        <label for="TipoLicor">Tipo de Licor</label>
+        <select asp-for="TipoLicor" class="form-control" required>
+            <option value="Cerveza">Cerveza</option>
+            <option value="Tequila">Tequila</option>
+            <option value="Ron">Ron</option>
+            <option value="Ginebra">Ginebra</option>
+            <option value="Whiskey">Whiskey</option>
+            <option value="Digestivo">Digestivo</option>
+            <option value="Agua Ardiente">Agua Ardiente</option>
+            <option value="Vino Tinto">Vino Tinto</option>
+            <option value="Vino Blanco">Vino Blanco</option>
+            <option value="Vino Rosado">Vino Rosado</option>
+            <option value="Champagne">Champagne</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Actualizar</button>
+</form>

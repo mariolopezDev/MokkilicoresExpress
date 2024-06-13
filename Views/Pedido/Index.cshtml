@@ -1,0 +1,36 @@
+@model List<MokkilicoresExpress.Models.Pedido>
+
+<h1>Pedidos</h1>
+<p>
+    <a href="@Url.Action("Create", "Pedido")">Crear Nuevo Pedido</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Producto ID</th>
+            <th>Cantidad</th>
+            <th>Costo Sin IVA</th>
+            <th>Costo Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var pedido in Model)
+{
+        <tr>
+            <td>@pedido.Id</td>
+            <td>@pedido.ProductoId</td>
+            <td>@pedido.Cantidad</td>
+            <td>@pedido.CostoSinIVA.ToString("C")</td>
+            <td>@pedido.CostoTotal.ToString("C")</td>
+            <td>@pedido.Estado</td>
+            <td>
+                <a href="@Url.Action("Edit", "Pedido", new { id = pedido.Id })">Editar</a> |
+                <a href="@Url.Action("Delete", "Pedido", new { id = pedido.Id })" onclick="return confirm('¿Está seguro de querer eliminar este pedido?');">Eliminar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

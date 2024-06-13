@@ -1,0 +1,40 @@
+@model List<MokkilicoresExpress.Models.Cliente>
+
+<h1>Clientes</h1>
+<p>
+    <a href="@Url.Action("Create", "Cliente")">Agregar Nuevo Cliente</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre Completo</th>
+            <th>Provincia</th>
+            <th>Cantón</th>
+            <th>Distrito</th>
+            <th>Total Comprado</th>
+            <th>Último Año</th>
+            <th>Últimos 6 Meses</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var cliente in Model)
+{
+        <tr>
+            <td>@cliente.Identificacion</td>
+            <td>@cliente.NombreCompleto</td>
+            <td>@cliente.Provincia</td>
+            <td>@cliente.Canton</td>
+            <td>@cliente.Distrito</td>
+            <td>@cliente.DineroCompradoTotal.ToString("C")</td>
+            <td>@cliente.DineroCompradoUltimoAnio.ToString("C")</td>
+            <td>@cliente.DineroCompradoUltimosSeisMeses.ToString("C")</td>
+            <td>
+                <a href="@Url.Action("Edit", "Cliente", new { id = cliente.Identificacion })">Editar</a> |
+                <a href="@Url.Action("Delete", "Cliente", new { id = cliente.Identificacion })" onclick="return confirm('¿Está seguro de querer eliminar este cliente?');">Eliminar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

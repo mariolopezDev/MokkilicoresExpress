@@ -1,0 +1,36 @@
+@model MokkilicoresExpress.Models.Cliente
+
+<h1>Editar Cliente</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Identificacion" />
+    <div class="form-group">
+        <label for="NombreCompleto">Nombre Completo</label>
+        <input asp-for="NombreCompleto" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="Provincia">Provincia</label>
+        <input asp-for="Provincia" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="Canton">Cantón</label>
+        <input asp-for="Canton" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="Distrito">Distrito</label>
+        <input asp-for="Distrito" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="DineroCompradoTotal">Dinero Comprado Total</label>
+        <input asp-for="DineroCompradoTotal" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="DineroCompradoUltimoAnio">Dinero Comprado Último Año</label>
+        <input asp-for="DineroCompradoUltimoAnio" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="DineroCompradoUltimosSeisMeses">Dinero Comprado Últimos 6 Meses</label>
+        <input asp-for="DineroCompradoUltimosSeisMeses" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-success">Actualizar</button>
+</form>

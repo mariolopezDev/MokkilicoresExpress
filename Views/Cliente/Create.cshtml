@@ -1,0 +1,39 @@
+@model MokkilicoresExpress.Models.Cliente
+
+<h1>Agregar Nuevo Cliente</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="Identificacion">Identificación</label>
+        <input type="text" class="form-control" id="Identificacion" name="Identificacion" required>
+    </div>
+    <div class="form-group">
+        <label for="NombreCompleto">Nombre Completo</label>
+        <input type="text" class="form-control" id="NombreCompleto" name="NombreCompleto" required>
+    </div>
+    <div class="form-group">
+        <label for="Provincia">Provincia</label>
+        <input type="text" class="form-control" id="Provincia" name="Provincia" required>
+    </div>
+    <div class="form-group">
+        <label for="Canton">Cantón</label>
+        <input type="text" class="form-control" id="Canton" name="Canton" required>
+    </div>
+    <div class="form-group">
+        <label for="Distrito">Distrito</label>
+        <input type="text" class="form-control" id="Distrito" name="Distrito" required>
+    </div>
+    <div class="form-group">
+        <label for="DineroCompradoTotal">Dinero Comprado Total</label>
+        <input type="text" class="form-control" id="DineroCompradoTotal" name="DineroCompradoTotal" required>
+    </div>
+    <div class="form-group">
+        <label for="DineroCompradoUltimoAnio">Dinero Comprado Último Año</label>
+        <input type="text" class="form-control" id="DineroCompradoUltimoAnio" name="DineroCompradoUltimoAnio" required>
+    </div>
+    <div class="form-group">
+        <label for="DineroCompradoUltimosSeisMeses">Dinero Comprado Últimos 6 Meses</label>
+        <input type="text" class="form-control" id="DineroCompradoUltimosSeisMeses" name="DineroCompradoUltimosSeisMeses" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Crear</button>
+</form>

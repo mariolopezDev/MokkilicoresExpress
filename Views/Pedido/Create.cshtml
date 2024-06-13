@@ -1,0 +1,28 @@
+@model MokkilicoresExpress.Models.Pedido
+
+<h1>Crear Nuevo Pedido</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="ProductoId">Producto ID</label>
+        <input type="text" class="form-control" id="ProductoId" name="ProductoId" required>
+    </div>
+    <div class="form-group">
+        <label for="Cantidad">Cantidad</label>
+        <input type="number" class="form-control" id="Cantidad" name="Cantidad" required>
+    </div>
+    <div class="form-group">
+        <label for="CostoSinIVA">Costo Sin IVA</label>
+        <input type="number" step="0.01" class="form-control" id="CostoSinIVA" name="CostoSinIVA" required>
+    </div>
+    <div class="form-group">
+        <label for="Estado">Estado del Pedido</label>
+        <select class="form-control" id="Estado" name="Estado" required>
+            <option value="En proceso">En proceso</option>
+            <option value="Facturado">Facturado</option>
+            <option value="Por entregar">Por entregar</option>
+            <option value="Entregado">Entregado</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Crear</button>
+</form>
