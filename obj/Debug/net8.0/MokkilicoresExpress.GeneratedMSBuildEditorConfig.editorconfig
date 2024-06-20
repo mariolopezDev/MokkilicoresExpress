@@ -42,6 +42,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW52ZW50YXJpby9DcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/Views/Inventario/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW52ZW50YXJpby9EZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/Views/Inventario/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSW52ZW50YXJpby9FZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

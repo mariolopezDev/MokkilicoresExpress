@@ -1,0 +1,34 @@
+@model MokkilicoresExpress.Models.Inventario
+
+@{
+    ViewData["Title"] = "Detalles del Inventario";
+}
+
+<h1>Detalles del Artículo</h1>
+
+<div class="form-group">
+    <label>ID:</label>
+    <input type="text" value="@Model.Id" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Cantidad en Existencia:</label>
+    <input type="text" value="@Model.CantidadEnExistencia" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>ID Bodega:</label>
+    <input type="text" value="@Model.BodegaId" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Fecha de Ingreso:</label>
+    <input type="text" value="@Model.FechaIngreso.ToShortDateString()" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Fecha de Vencimiento:</label>
+    <input type="text" value="@Model.FechaVencimiento.ToShortDateString()" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Tipo de Licor:</label>
+    <input type="text" value="@Model.TipoLicor" class="form-control" readonly />
+</div>
+
+<a href="@Url.Action("Index", "Inventario")" class="btn btn-primary">Volver a la lista</a>

@@ -1,8 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace MokkilicoresExpress.Models
 {
     public class Cliente
     {
+        [Required]
         public string Identificacion { get; set; }
+        [Required]
+        [StringLength(100)]
         public string NombreCompleto { get; set; }
         public string Provincia { get; set; }
         public string Canton { get; set; }

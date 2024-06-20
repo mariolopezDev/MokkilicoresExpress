@@ -17,6 +17,59 @@ html {
   min-height: 100%;
 }
 
+
+
+/* Estilos generales para mejorar la tipografía y el fondo */
 body {
   margin-bottom: 60px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f4;
+  color: #333333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Mejoras en la barra de navegación */
+.navbar {
+  background-color: #007bff; /* Un azul más brillante */
+  color: #ffffff;
+}
+
+.navbar .nav-link {
+  color: #ffffff;
+}
+
+.navbar .nav-link:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos para botones */
+.btn-primary {
+  background-color: #0056b3;
+  border-color: #004085;
+}
+
+.btn-info, .btn-danger, .btn-success {
+  color: #fff;
+}
+
+/* Mejoras en las tablas */
+.table {
+  width: 100%;
+  background-color: #ffffff;
+  border-collapse: collapse;
+}
+
+.table th {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.table td, .table th {
+  border: 1px solid #dee2e6;
+  padding: 8px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 123, 255, 0.05);
 }

@@ -1,42 +1,46 @@
 using Microsoft.AspNetCore.Mvc;
 using MokkilicoresExpress.Models;
-using System.Collections.Generic;
+
+using Microsoft.Extensions.Caching.Memory;
 
 namespace MokkilicoresExpress.Controllers
 {
     public class PedidoController : Controller
     {
-        private readonly List<Pedido> _pedidos;
+        private readonly IMemoryCache _cache;
+        private const string PedidoCacheKey = "Pedidos";
 
-        public PedidoController(List<Pedido> pedidos)
+        public PedidoController(IMemoryCache cache)
         {
-            _pedidos = pedidos;
+            _cache = cache;
         }
 
-        // Muestra la lista de pedidos
         public IActionResult Index()
         {
-            return View(_pedidos);
+            var pedidos = _cache.GetOrCreate(PedidoCacheKey, entry => {
+                return new List<Pedido>();
+            });
+            return View(pedidos);
         }
 
-        // Retorna la vista para crear un nuevo pedido
         public IActionResult Create()
         {
             return View();
         }
 
-        // Procesa la creación de un nuevo pedido
         [HttpPost]
         public IActionResult Create(Pedido pedido)
         {
-            _pedidos.Add(pedido);
+            var pedidos = _cache.Get<List<Pedido>>(PedidoCacheKey);
+            pedidos.Add(pedido);
+            _cache.Set(PedidoCacheKey, pedidos);
             return RedirectToAction(nameof(Index));
         }
 
-        // Retorna la vista para editar un pedido existente
         public IActionResult Edit(int id)
         {
-            var pedido = _pedidos.Find(p => p.Id == id);
+            var pedidos = _cache.Get<List<Pedido>>(PedidoCacheKey);
+            var pedido = pedidos.FirstOrDefault(p => p.Id == id);
             if (pedido == null)
             {
                 return NotFound();
@@ -44,32 +48,49 @@ namespace MokkilicoresExpress.Controllers
             return View(pedido);
         }
 
-        // Procesa la actualización de un pedido
         [HttpPost]
         public IActionResult Edit(Pedido pedido)
         {
-            var item = _pedidos.Find(p => p.Id == pedido.Id);
-            if (item != null)
+            var pedidos = _cache.Get<List<Pedido>>(PedidoCacheKey);
+            var existingPedido = pedidos.FirstOrDefault(p => p.Id == pedido.Id);
+            if (existingPedido != null)
             {
-                item.ProductoId = pedido.ProductoId;
-                item.Cantidad = pedido.Cantidad;
-                item.CostoSinIVA = pedido.CostoSinIVA;
-                item.Estado = pedido.Estado;
+                existingPedido.ProductoId = pedido.ProductoId;
+                existingPedido.Cantidad = pedido.Cantidad;
+                existingPedido.CostoSinIVA = pedido.CostoSinIVA;
+                existingPedido.Estado = pedido.Estado;
+                _cache.Set(PedidoCacheKey, pedidos);
                 return RedirectToAction(nameof(Index));
             }
             return NotFound();
         }
 
-        // Procesa la eliminación de un pedido
         public IActionResult Delete(int id)
         {
-            var pedido = _pedidos.Find(p => p.Id == id);
+            var pedidos = _cache.Get<List<Pedido>>(PedidoCacheKey);
+            var pedido = pedidos.FirstOrDefault(p => p.Id == id);
             if (pedido != null)
             {
-                _pedidos.Remove(pedido);
+                pedidos.Remove(pedido);
+                _cache.Set(PedidoCacheKey, pedidos);
                 return RedirectToAction(nameof(Index));
             }
             return NotFound();
         }
+        public IActionResult Search(string searchTerm)
+        {
+            var pedidos = _cache.Get<List<Pedido>>(PedidoCacheKey);
+            var filteredPedidos = string.IsNullOrWhiteSpace(searchTerm) 
+                ? pedidos 
+                : pedidos.Where(p => p.ProductoId.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(filteredPedidos);
+            }
+
+            return View("Index", filteredPedidos);
+        }
     }
 }
+

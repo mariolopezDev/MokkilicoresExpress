@@ -1,10 +1,20 @@
 @model List<MokkilicoresExpress.Models.Inventario>
+@{
+    ViewData["Title"] = "Inventario";
+}
 
 <h1>Inventario</h1>
-<p>
-    <a href="@Url.Action("Create", "Inventario")">Crear Nuevo Artículo</a>
-</p>
-<table class="table">
+
+<!-- Formulario de búsqueda dinámica -->
+<input type="text" id="searchTerm" class="form-control mb-3" placeholder="Buscar por tipo de licor..." onkeyup="searchInventory()" />
+
+<!-- Botón para crear un nuevo artículo -->
+<div class="mb-4">
+    <a href="@Url.Action("Create", "Inventario")" class="btn btn-success">Crear Nuevo Artículo</a>
+</div>
+
+<!-- Tabla de inventario -->
+<table class="table table-striped" id="inventoryTable">
     <thead>
         <tr>
             <th>ID</th>
@@ -17,20 +27,58 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model)
-{
-        <tr>
-            <td>@item.Id</td>
-            <td>@item.CantidadEnExistencia</td>
-            <td>@item.BodegaId</td>
-            <td>@item.FechaIngreso.ToShortDateString()</td>
-            <td>@item.FechaVencimiento.ToShortDateString()</td>
-            <td>@item.TipoLicor</td>
-            <td>
-                <a href="@Url.Action("Edit", "Inventario", new { id = item.Id })">Editar</a> |
-                <a href="@Url.Action("Delete", "Inventario", new { id = item.Id })" onclick="return confirm('¿Estás seguro de querer eliminar este artículo?');">Eliminar</a>
-            </td>
-        </tr>
-}
+        @if (Model.Any()) {
+            foreach (var item in Model) {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.CantidadEnExistencia</td>
+                    <td>@item.BodegaId</td>
+                    <td>@item.FechaIngreso.ToShortDateString()</td>
+                    <td>@item.FechaVencimiento.ToShortDateString()</td>
+                    <td>@item.TipoLicor</td>
+                    <td>
+                        <a href="@Url.Action("Details", "Inventario", new { id = item.Id })" class="btn btn-info">Detalles</a>
+                        <a href="@Url.Action("Edit", "Inventario", new { id = item.Id })" class="btn btn-primary">Editar</a>
+                        <a href="@Url.Action("Delete", "Inventario", new { id = item.Id })" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este artículo?');">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        } else {
+            <tr>
+                <td colspan="7" class="text-center">No se encontraron resultados.</td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        function searchInventory() {
+            var searchTerm = $('#searchTerm').val();
+            $.get('@Url.Action("Search", "Inventario")', { searchTerm: searchTerm }, function(data) {
+                var rows = "";
+                if (!data.length) {
+                    rows += '<tr><td colspan="7" class="text-center">No se encontraron resultados.</td></tr>';
+                } else {
+                    data.forEach(function(item) {
+                        rows += `<tr>
+                                    <td>${item.id}</td>
+                                    <td>${item.cantidadEnExistencia}</td>
+                                    <td>${item.bodegaId}</td>
+                                    <td>${new Date(item.fechaIngreso).toLocaleDateString()}</td>
+                                    <td>${new Date(item.fechaVencimiento).toLocaleDateString()}</td>
+                                    <td>${item.tipoLicor}</td>
+                                    <td>
+                                        <a href="/Inventario/Details/${item.id}" class="btn btn-info">Detalles</a>
+                                        <a href="/Inventario/Edit/${item.id}" class="btn btn-primary">Editar</a>
+                                        <a href="/Inventario/Delete/${item.id}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este artículo?');">Eliminar</a>
+                                    </td>
+                                </tr>`;
+                    });
+                }
+                $('#inventoryTable tbody').html(rows);
+            });
+        }
+    </script>
+}
