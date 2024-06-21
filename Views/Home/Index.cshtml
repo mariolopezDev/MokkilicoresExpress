@@ -2,9 +2,52 @@
     ViewData["Title"] = "Inicio";
 }
 
-<h1>Bienvenido a Mokkilicores Express</h1>
-<p>
-    <a href="/Inventario">Gestionar Inventario</a> |
-    <a href="/Cliente">Gestionar Clientes</a> |
-    <a href="/Pedido">Gestionar Pedidos</a>
-</p>
+<div class="container mt-5">
+    <h1 class="display-4 text-center">Bienvenido a Mokkilicores Express</h1>
+    <p class="lead text-center">Administra eficientemente tu negocio.</p>
+
+    <!-- Área de autenticación -->
+    <div class="text-right mb-4">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <p class="lead">Hola, @User.Identity.Name!</p>
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="btn btn-warning">Cerrar Sesión</button>
+            </form>
+        }
+        else
+        {
+            <a href="/Account/Login" class="btn btn-success">Iniciar Sesión</a>
+        }
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4 mb-3 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h5 class="card-title">Gestionar Inventario</h5>
+                    <p class="card-text">Administra todos los productos almacenados en tus bodegas.</p>
+                    <a href="/Inventario" class="btn btn-primary">Inventario</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h5 class="card-title">Gestionar Clientes</h5>
+                    <p class="card-text">Visualiza y edita la información de tus clientes.</p>
+                    <a href="/Cliente" class="btn btn-primary">Clientes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h5 class="card-title">Gestionar Pedidos</h5>
+                    <p class="card-text">Controla todos los pedidos y gestiona su entrega.</p>
+                    <a href="/Pedido" class="btn btn-primary">Pedidos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -18,8 +18,20 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = /Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress
 build_property._RazorSourceGeneratorDebug = 
 
+[/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Mb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/Views/Account/Logout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Mb2dvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/Views/Cliente/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2xpZW50ZS9DcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/Views/Cliente/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2xpZW50ZS9EZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/Views/Cliente/Edit.cshtml]
@@ -56,6 +68,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/Views/Pedido/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGVkaWRvL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/Views/Pedido/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGVkaWRvL0RldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/Views/Pedido/Edit.cshtml]

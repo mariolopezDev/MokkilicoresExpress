@@ -1,5 +1,3 @@
-using System;
-
 namespace MokkilicoresExpress.Models
 {
     public class Inventario

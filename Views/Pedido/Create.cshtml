@@ -2,6 +2,15 @@
 
 <h1>Crear Nuevo Pedido</h1>
 
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="alert alert-danger">
+        Debe iniciar sesión para crear un pedido.
+    </div>
+}
+else
+{
+
 <form asp-action="Create" method="post">
     <div class="form-group">
         <label for="ProductoId">Producto ID</label>
@@ -26,3 +35,4 @@
     </div>
     <button type="submit" class="btn btn-primary">Crear</button>
 </form>
+}

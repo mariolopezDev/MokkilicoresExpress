@@ -5,8 +5,12 @@
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Identificacion" />
     <div class="form-group">
-        <label for="NombreCompleto">Nombre Completo</label>
-        <input asp-for="NombreCompleto" class="form-control" required>
+        <label for="Nombre">Nombre</label>
+        <input asp-for="Nombre" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="Apellido">Apellidos</label>
+        <input asp-for="Apellido" class="form-control" required>
     </div>
     <div class="form-group">
         <label for="Provincia">Provincia</label>

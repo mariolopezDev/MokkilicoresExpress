@@ -8,7 +8,10 @@ namespace MokkilicoresExpress.Models
         public string Identificacion { get; set; }
         [Required]
         [StringLength(100)]
-        public string NombreCompleto { get; set; }
+        public string Nombre { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string Apellido { get; set; }
         public string Provincia { get; set; }
         public string Canton { get; set; }
         public string Distrito { get; set; }

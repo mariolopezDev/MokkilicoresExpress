@@ -1,40 +1,87 @@
 @model List<MokkilicoresExpress.Models.Cliente>
+@{
+    ViewData["Title"] = "Clientes";
+}
 
 <h1>Clientes</h1>
-<p>
-    <a href="@Url.Action("Create", "Cliente")">Agregar Nuevo Cliente</a>
-</p>
-<table class="table">
+<input type="text" id="searchTermCliente" class="form-control mb-3" placeholder="Buscar por nombre, apellidos o identificación..." onkeyup="searchCliente()" />
+
+<div class="mb-4">
+    <a href="@Url.Action("Create", "Cliente")" class="btn btn-success">Crear Nuevo Cliente</a>
+</div>
+
+<table class="table table-striped" id="clienteTable">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Nombre Completo</th>
+            <th>Identificación</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
             <th>Provincia</th>
             <th>Cantón</th>
             <th>Distrito</th>
-            <th>Total Comprado</th>
-            <th>Último Año</th>
-            <th>Últimos 6 Meses</th>
+            <th>Compras Históricas</th>
+            <th>Compras 12 Meses</th>
+            <th>Compras 6 Meses</th>
             <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var cliente in Model)
-{
-        <tr>
-            <td>@cliente.Identificacion</td>
-            <td>@cliente.NombreCompleto</td>
-            <td>@cliente.Provincia</td>
-            <td>@cliente.Canton</td>
-            <td>@cliente.Distrito</td>
-            <td>@cliente.DineroCompradoTotal.ToString("C")</td>
-            <td>@cliente.DineroCompradoUltimoAnio.ToString("C")</td>
-            <td>@cliente.DineroCompradoUltimosSeisMeses.ToString("C")</td>
-            <td>
-                <a href="@Url.Action("Edit", "Cliente", new { id = cliente.Identificacion })">Editar</a> |
-                <a href="@Url.Action("Delete", "Cliente", new { id = cliente.Identificacion })" onclick="return confirm('¿Está seguro de querer eliminar este cliente?');">Eliminar</a>
-            </td>
-        </tr>
-}
+        @if (Model.Any()) {
+            foreach (var cliente in Model) {
+                <tr>
+                    <td>@cliente.Identificacion</td>
+                    <td>@cliente.Nombre</td>
+                    <td>@cliente.Apellido</td>
+                    <td>@cliente.Provincia</td>
+                    <td>@cliente.Canton</td>
+                    <td>@cliente.Distrito</td>
+                    <td>@cliente.DineroCompradoTotal</td>
+                    <td>@cliente.DineroCompradoUltimoAnio</td>
+                    <td>@cliente.DineroCompradoUltimosSeisMeses</td>
+                    <td>
+                        <a href="@Url.Action("Details", "Cliente", new { id = cliente.Identificacion })" class="btn btn-info">Detalles</a>
+                        <a href="@Url.Action("Edit", "Cliente", new { id = cliente.Identificacion })" class="btn btn-primary">Editar</a>
+                        <a href="@Url.Action("Delete", "Cliente", new { id = cliente.Identificacion })" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este cliente?');">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        } else {
+            <tr><td colspan="10" class="text-center">No se encontraron resultados.</td></tr>
+        }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        function searchCliente() {
+            var searchTerm = $('#searchTermCliente').val();
+            $.get('@Url.Action("Search", "Cliente")', { searchTerm: searchTerm }, function(data) {
+                var rows = "";
+                if (!data.length) {
+                    rows += '<tr><td colspan="10" class="text-center">No se encontraron resultados.</td></tr>';
+                } else {
+                    data.forEach(function(cliente) {
+                        rows += `<tr>
+                                    <td>${cliente.identificacion}</td>
+                                    <td>${cliente.nombre}</td>
+                                    <td>${cliente.apellido}</td>
+                                    <td>${cliente.provincia}</td>
+                                    <td>${cliente.canton}</td>
+                                    <td>${cliente.distrito}</td>
+                                    <td>${cliente.dineroCompradoTotal}</td>
+                                    <td>${cliente.dineroCompradoUltimoAnio}</td>
+                                    <td>${cliente.dineroCompradoUltimosSeisMeses}</td>
+                                    <td>
+                                        <a href="/Cliente/Details/${cliente.identificacion}" class="btn btn-info">Detalles</a>
+                                        <a href="/Cliente/Edit/${cliente.identificacion}" class="btn btn-primary">Editar</a>
+                                        <a href="/Cliente/Delete/${cliente.identificacion}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este cliente?');">Eliminar</a>
+                                    </td>
+                                </tr>`;
+                    });
+                }
+                $('#clienteTable tbody').html(rows);
+            });
+        }
+    </script>
+}
