@@ -33,7 +33,10 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Cerrar Sesión (@User.Identity.Name)</a>
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="btn btn-warning">Cerrar Sesión (@User.Identity.Name)</button>
+            </form>
+                               
                             </li>
                         }
                         else

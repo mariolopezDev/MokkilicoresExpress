@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MokkilicoresExpress.Models;
+using Microsoft.AspNetCore.Authorization;
 
 using Microsoft.Extensions.Caching.Memory;
 
@@ -39,8 +40,13 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
+       
         public IActionResult Create(Inventario inventario)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
             if (ModelState.IsValid)
             {
                 var inventarioList = _cache.Get<List<Inventario>>(InventarioCacheKey);

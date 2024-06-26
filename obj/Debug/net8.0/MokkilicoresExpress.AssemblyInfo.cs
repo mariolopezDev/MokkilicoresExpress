@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MokkilicoresExpress")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9bc234ee9ad4f63086e5ff989c24059b188f3b35")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd5615828bba5c1bfe33fddff734f32239fa9bda")]
 [assembly: System.Reflection.AssemblyProductAttribute("MokkilicoresExpress")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MokkilicoresExpress")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

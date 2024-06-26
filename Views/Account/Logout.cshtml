@@ -7,3 +7,7 @@
 <form asp-action="Logout" method="post">
     <button type="submit" class="btn btn-warning">Cerrar Sesión</button>
 </form>
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
