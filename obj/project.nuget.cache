@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "jc388ehVawMka5mMvdZmPUDzbmkTSfcyFjoCjj7czhcH20T0lghmEyO4lfFNqWTyi0ue1ToUvxKW+R+c3zkHLg==",
+  "dgSpecHash": "zmka/L92oEeCsfSCiZHLY1xmCP00GMTUPyUEeqwSImd4WFj49QCSMoNOV9CNaD7WRADx20H+LcmF9HfMzOtt0g==",
   "success": true,
   "projectFilePath": "/Users/mariolopez/workspace/github.com/mariolopezDev/MokkilicoresExpress/MokkilicoresExpress.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/Users/mariolopez/.nuget/packages/microsoft.netcore.app.ref/7.0.18/microsoft.netcore.app.ref.7.0.18.nupkg.sha512",
+    "/Users/mariolopez/.nuget/packages/microsoft.aspnetcore.app.ref/7.0.18/microsoft.aspnetcore.app.ref.7.0.18.nupkg.sha512",
+    "/Users/mariolopez/.nuget/packages/microsoft.netcore.app.host.osx-arm64/7.0.18/microsoft.netcore.app.host.osx-arm64.7.0.18.nupkg.sha512"
+  ],
   "logs": []
 }
