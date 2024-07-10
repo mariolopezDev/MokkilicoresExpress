@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Memory;
-using MokkilicoresExpress.Models;  
+using MokkilicoresExpress.Models; 
+using MokkilicoresExpress.Services; 
 using System.Collections.Generic;
 
 
@@ -18,9 +19,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Account/Logout";
     });
 
-// Agregar el servicio de acceso al contexto HTTP
+// servicio de acceso al contexto HTTP
 builder.Services.AddHttpContextAccessor();
 
+// Registro InventarioService como singleton
+builder.Services.AddSingleton<InventarioService>();
 
 var app = builder.Build();
 

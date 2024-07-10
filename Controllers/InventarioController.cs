@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MokkilicoresExpress.Models;
 using Microsoft.AspNetCore.Authorization;
+using MokkilicoresExpress.Services;
 
 using Microsoft.Extensions.Caching.Memory;
 
@@ -9,28 +10,16 @@ namespace MokkilicoresExpress.Controllers
 {
     public class InventarioController : Controller
     {
-        private readonly IMemoryCache _cache;
-        private const string InventarioCacheKey = "Inventario";
+        private readonly InventarioService _inventarioService;
 
-        public InventarioController(IMemoryCache cache)
+        public InventarioController(InventarioService inventarioService)
         {
-            _cache = cache;
-
-            // Inicializar el inventario en la caché si aún no está presente
-            if (!_cache.TryGetValue(InventarioCacheKey, out List<Inventario> _))
-            {
-                List<Inventario> initialInventario = new List<Inventario>
-                {
-                    new Inventario { Id = 1, CantidadEnExistencia = 100, BodegaId = 1, FechaIngreso = DateTime.Now, FechaVencimiento = DateTime.Now.AddYears(1), TipoLicor = "Vodka" },
-                    new Inventario { Id = 2, CantidadEnExistencia = 150, BodegaId = 2, FechaIngreso = DateTime.Now, FechaVencimiento = DateTime.Now.AddYears(1), TipoLicor = "Whiskey" }
-                };
-                _cache.Set(InventarioCacheKey, initialInventario, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60)));
-            }
+            _inventarioService = inventarioService;
         }
 
         public IActionResult Index()
         {
-            var inventario = _cache.Get<List<Inventario>>(InventarioCacheKey);
+            var inventario = _inventarioService.GetAll();
             return View(inventario);
         }
 
@@ -40,27 +29,19 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
-       
+        //[Authorize]
         public IActionResult Create(Inventario inventario)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Account");
-            }
             if (ModelState.IsValid)
             {
-                var inventarioList = _cache.Get<List<Inventario>>(InventarioCacheKey);
-                inventarioList.Add(inventario);
-                _cache.Set(InventarioCacheKey, inventarioList, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60)));
+                _inventarioService.Add(inventario);
                 return RedirectToAction(nameof(Index));
             }
             return View(inventario);
         }
-
-        public IActionResult Details(int id)
+       public IActionResult Details(int id)
         {
-            var inventario = _cache.Get<List<Inventario>>(InventarioCacheKey);
-            var item = inventario.FirstOrDefault(x => x.Id == id);
+            var item = _inventarioService.GetById(id);
             if (item == null)
             {
                 return NotFound();
@@ -70,8 +51,7 @@ namespace MokkilicoresExpress.Controllers
 
         public IActionResult Edit(int id)
         {
-            var inventario = _cache.Get<List<Inventario>>(InventarioCacheKey);
-            var item = inventario.FirstOrDefault(x => x.Id == id);
+            var item = _inventarioService.GetById(id);
             if (item == null)
             {
                 return NotFound();
@@ -82,40 +62,33 @@ namespace MokkilicoresExpress.Controllers
         [HttpPost]
         public IActionResult Edit(Inventario inventario)
         {
-            var inventarioList = _cache.Get<List<Inventario>>(InventarioCacheKey);
-            var index = inventarioList.FindIndex(i => i.Id == inventario.Id);
-            if (index != -1)
+            if (ModelState.IsValid)
             {
-                inventarioList[index] = inventario; // Actualiza el elemento en la lista
-                _cache.Set(InventarioCacheKey, inventarioList, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60)));
-                return RedirectToAction(nameof(Index));
+                bool updated = _inventarioService.Update(inventario.Id, inventario);
+                if (updated)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("", "No se pudo actualizar el inventario");
             }
-            return NotFound();
+            return View(inventario);
         }
 
         public IActionResult Delete(int id)
         {
-            var inventarioList = _cache.Get<List<Inventario>>(InventarioCacheKey);
-            var itemIndex = inventarioList.FindIndex(i => i.Id == id);
-            if (itemIndex != -1)
+            bool deleted = _inventarioService.Delete(id);
+            if (!deleted)
             {
-                inventarioList.RemoveAt(itemIndex);
-                _cache.Set(InventarioCacheKey, inventarioList, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60)));
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return NotFound();
+            return RedirectToAction(nameof(Index));
         }
 
         // Procesa la búsqueda de un artículo de inventario
         public IActionResult Search(string searchTerm)
         {
-            // Obtener la lista de inventario desde la caché
-            var inventarioList = _cache.Get<List<Inventario>>(InventarioCacheKey);
-
-            // Filtrar los elementos basados en el término de búsqueda, ignorando mayúsculas y minúsculas
-            var filteredItems = string.IsNullOrWhiteSpace(searchTerm)
-                ? inventarioList
-                : inventarioList.Where(i => i.TipoLicor.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            // Usar el servicio para obtener los elementos filtrados
+            var filteredItems = _inventarioService.SearchInventory(searchTerm);
 
             // Verificar si la solicitud es un AJAX request para devolver JSON
             if (HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -126,6 +99,5 @@ namespace MokkilicoresExpress.Controllers
             // Devolver la vista 'Index' con los elementos filtrados
             return View("Index", filteredItems);
         }
-
     }
 }
