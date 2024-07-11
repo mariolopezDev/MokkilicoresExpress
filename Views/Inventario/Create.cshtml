@@ -12,8 +12,7 @@ else
 {
     <form asp-action="Create" method="post">
         <div class="form-group">
-            <label for="Id">ID</label>
-            <input type="text" class="form-control" id="Id" name="Id" required>
+            <input type="text" class="form-control" id="Id" name="Id" value=0 data-placeholder="Auto-Generado" hidden>
         </div>
         <div class="form-group">
             <label for="CantidadEnExistencia">Cantidad en Existencia</label>

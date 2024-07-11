@@ -3,9 +3,6 @@ using MokkilicoresExpress.Models;
 using Microsoft.AspNetCore.Authorization;
 using MokkilicoresExpress.Services;
 
-using Microsoft.Extensions.Caching.Memory;
-
-
 namespace MokkilicoresExpress.Controllers
 {
     public class InventarioController : Controller
@@ -29,7 +26,7 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public IActionResult Create(Inventario inventario)
         {
             if (ModelState.IsValid)
@@ -60,6 +57,7 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Edit(Inventario inventario)
         {
             if (ModelState.IsValid)
@@ -74,6 +72,7 @@ namespace MokkilicoresExpress.Controllers
             return View(inventario);
         }
 
+        [Authorize]
         public IActionResult Delete(int id)
         {
             bool deleted = _inventarioService.Delete(id);

@@ -17,6 +17,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.SlidingExpiration = true;
     });
 
 // servicio de acceso al contexto HTTP
@@ -39,9 +42,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseAuthorization();
-app.UseAuthentication();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 app.MapControllerRoute(
