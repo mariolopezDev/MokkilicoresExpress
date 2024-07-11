@@ -29,6 +29,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<InventarioService>();
 builder.Services.AddSingleton<ClienteService>();
 builder.Services.AddSingleton<PedidoService>();
+builder.Services.AddSingleton<DireccionService>();
 // NOTA: Cambiar a AddScoped en el futuro cuando se implemente la bases de datos y cuando gestión del estado de sesión sea necesaria.
 // AddScoped proporciona una instancia por solicitud
 // builder.Services.AddScoped<InventarioService>();

@@ -1,0 +1,38 @@
+@model MokkilicoresExpress.Models.Direccion
+
+@{
+    ViewData["Title"] = "Detalles de Dirección";
+}
+
+<h1>Detalles de Dirección</h1>
+
+<div class="form-group">
+    <label>ID:</label>
+    <input type="text" value="@Model.Id" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Cliente ID:</label>
+    <input type="text" value="@Model.ClienteId" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Provincia:</label>
+    <input type="text" value="@Model.Provincia" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Cantón:</label>
+    <input type="text" value="@Model.Canton" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Distrito:</label>
+    <input type="text" value="@Model.Distrito" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Punto en Waze:</label>
+    <input type="text" value="@Model.PuntoEnWaze" class="form-control" readonly />
+</div>
+<div class="form-group">
+    <label>Es Condominio:</label>
+    <input type="text" value="@Model.EsCondominio ? "Sí" : "No"" class="form-control" readonly />
+</div>
+
+<a href="@Url.Action("Index", "Direccion")" class="btn btn-primary">Volver a la lista</a>

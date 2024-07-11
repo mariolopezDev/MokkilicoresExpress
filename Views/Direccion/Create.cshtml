@@ -1,0 +1,34 @@
+@model MokkilicoresExpress.Models.Direccion
+
+<h1>Agregar Nueva Dirección</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="ClienteId">Cliente ID</label>
+        <input type="text" class="form-control" id="ClienteId" name="ClienteId" required>
+    </div>
+    <div class="form-group">
+        <label for="Provincia">Provincia</label>
+        <input type="text" class="form-control" id="Provincia" name="Provincia" required>
+    </div>
+    <div class="form-group">
+        <label for="Canton">Cantón</label>
+        <input type="text" class="form-control" id="Canton" name="Canton" required>
+    </div>
+    <div class="form-group">
+        <label for="Distrito">Distrito</label>
+        <input type="text" class="form-control" id="Distrito" name="Distrito" required>
+    </div>
+    <div class="form-group">
+        <label for="PuntoEnWaze">Punto en Waze (URL)</label>
+        <input type="url" class="form-control" id="PuntoEnWaze" name="PuntoEnWaze" required>
+    </div>
+    <div class="form-group">
+        <label for="EsCondominio">Es Condominio</label>
+        <select class="form-control" id="EsCondominio" name="EsCondominio" required>
+            <option value="true">Sí</option>
+            <option value="false">No</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Agregar</button>
+</form>

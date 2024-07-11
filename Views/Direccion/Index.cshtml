@@ -1,0 +1,43 @@
+@model List<MokkilicoresExpress.Models.Direccion>
+@{
+    ViewData["Title"] = "Direcciones";
+}
+
+<h1>Direcciones</h1>
+
+<div class="mb-4">
+    <a href="@Url.Action("Create", "Direccion")" class="btn btn-success">Agregar Nueva Dirección</a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cliente ID</th>
+            <th>Provincia</th>
+            <th>Cantón</th>
+            <th>Distrito</th>
+            <th>Punto en Waze</th>
+            <th>Es Condominio</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var direccion in Model) {
+        <tr>
+            <td>@direccion.Id</td>
+            <td>@direccion.ClienteId</td>
+            <td>@direccion.Provincia</td>
+            <td>@direccion.Canton</td>
+            <td>@direccion.Distrito</td>
+            <td>@direccion.PuntoEnWaze</td>
+            <td>@(direccion.EsCondominio ? "Sí" : "No")</td>
+            <td>
+                <a href="@Url.Action("Details", "Direccion", new { id = direccion.Id })" class="btn btn-info">Detalles</a>
+                <a href="@Url.Action("Edit", "Direccion", new { id = direccion.Id })" class="btn btn-primary">Editar</a>
+                <a href="@Url.Action("Delete", "Direccion", new { id = direccion.Id })" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar esta dirección?');">Eliminar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

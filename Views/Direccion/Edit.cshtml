@@ -1,0 +1,35 @@
+@model MokkilicoresExpress.Models.Direccion
+
+<h1>Editar Dirección</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label for="ClienteId">Cliente ID</label>
+        <input asp-for="ClienteId" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="Provincia">Provincia</label>
+        <input asp-for="Provincia" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="Canton">Cantón</label>
+        <input asp-for="Canton" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="Distrito">Distrito</label>
+        <input asp-for="Distrito" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="PuntoEnWaze">Punto en Waze (URL)</label>
+        <input asp-for="PuntoEnWaze" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="EsCondominio">Es Condominio</label>
+        <select asp-for="EsCondominio" class="form-control" required>
+            <option value="true">Sí</option>
+            <option value="false">No</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Actualizar</button>
+</form>

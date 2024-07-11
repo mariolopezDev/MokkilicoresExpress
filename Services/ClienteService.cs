@@ -12,7 +12,9 @@ namespace MokkilicoresExpress.Services
             {
                 // Inicializa con algunos clientes de prueba
                 new Cliente { Identificacion = "101", Nombre = "Juan", Apellido = "Pérez", Provincia = "San José", Canton = "Central", Distrito = "Carmen", DineroCompradoTotal = 5000, DineroCompradoUltimoAnio = 3000, DineroCompradoUltimosSeisMeses = 1500 },
-                new Cliente { Identificacion = "102", Nombre = "María", Apellido = "Martínez", Provincia = "Heredia", Canton = "Heredia", Distrito = "Ulloa", DineroCompradoTotal = 7500, DineroCompradoUltimoAnio = 4500, DineroCompradoUltimosSeisMeses = 2000 }
+                new Cliente { Identificacion = "102", Nombre = "María", Apellido = "Martínez", Provincia = "Heredia", Canton = "Heredia", Distrito = "Ulloa", DineroCompradoTotal = 7500, DineroCompradoUltimoAnio = 4500, DineroCompradoUltimosSeisMeses = 2000 },
+                new Cliente { Identificacion = "103", Nombre = "Carlos", Apellido = "González", Provincia = "Alajuela", Canton = "Alajuela", Distrito = "San Rafael", DineroCompradoTotal = 10000, DineroCompradoUltimoAnio = 6000, DineroCompradoUltimosSeisMeses = 3000 },
+                new Cliente { Identificacion = "104", Nombre = "Ana", Apellido = "Hernández", Provincia = "Cartago", Canton = "Cartago", Distrito = "Oriental", DineroCompradoTotal = 12500, DineroCompradoUltimoAnio = 7500, DineroCompradoUltimosSeisMeses = 4000 }
             };
         }
 
