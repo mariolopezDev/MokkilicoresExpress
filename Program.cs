@@ -25,8 +25,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // servicio de acceso al contexto HTTP
 builder.Services.AddHttpContextAccessor();
 
-// Registro InventarioService como singleton
+// Registro Services como singleton para que se comparta entre los controladores
 builder.Services.AddSingleton<InventarioService>();
+builder.Services.AddSingleton<ClienteService>();
+builder.Services.AddSingleton<PedidoService>();
+// NOTA: Cambiar a AddScoped en el futuro cuando se implemente la bases de datos y cuando gestión del estado de sesión sea necesaria.
+// AddScoped proporciona una instancia por solicitud
+// builder.Services.AddScoped<InventarioService>();
+// builder.Services.AddScoped<ClienteService>();
+// builder.Services.AddScoped<PedidoService>();
 
 var app = builder.Build();
 

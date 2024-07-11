@@ -1,22 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using MokkilicoresExpress.Models;
-using Microsoft.Extensions.Caching.Memory;
+using MokkilicoresExpress.Services;
 
 namespace MokkilicoresExpress.Controllers
 {
     public class ClienteController : Controller
     {
-        private readonly IMemoryCache _cache;
-        private const string ClienteCacheKey = "Clientes";
+        private readonly ClienteService _clienteService;
 
-        public ClienteController(IMemoryCache cache)
+        public ClienteController(ClienteService clienteService)
         {
-            _cache = cache;
+            _clienteService = clienteService;
         }
 
         public IActionResult Index()
         {
-            var clientes = _cache.GetOrCreate(ClienteCacheKey, entry => new List<Cliente>());
+            var clientes = _clienteService.GetAll();
             return View(clientes);
         }
 
@@ -28,16 +27,24 @@ namespace MokkilicoresExpress.Controllers
         [HttpPost]
         public IActionResult Create(Cliente cliente)
         {
-            var clientes = _cache.Get<List<Cliente>>(ClienteCacheKey);
-            clientes.Add(cliente);
-            _cache.Set(ClienteCacheKey, clientes);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _clienteService.Add(cliente);
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+            return View(cliente);
         }
 
         public IActionResult Details(string id)
         {
-            var clientes = _cache.Get<List<Cliente>>(ClienteCacheKey);
-            var cliente = clientes?.FirstOrDefault(c => c.Identificacion == id);
+            var cliente = _clienteService.GetById(id);
             if (cliente == null)
             {
                 return NotFound();
@@ -47,8 +54,7 @@ namespace MokkilicoresExpress.Controllers
 
         public IActionResult Edit(string id)
         {
-            var clientes = _cache.Get<List<Cliente>>(ClienteCacheKey);
-            var cliente = clientes?.FirstOrDefault(c => c.Identificacion == id);
+            var cliente = _clienteService.GetById(id);
             if (cliente == null)
             {
                 return NotFound();
@@ -59,56 +65,41 @@ namespace MokkilicoresExpress.Controllers
         [HttpPost]
         public IActionResult Edit(Cliente cliente)
         {
-            var clientes = _cache.Get<List<Cliente>>(ClienteCacheKey);
-            var existingCliente = clientes?.FirstOrDefault(c => c.Identificacion == cliente.Identificacion);
-            if (existingCliente != null)
+            if (ModelState.IsValid)
             {
-                existingCliente.Nombre = cliente.Nombre;
-                existingCliente.Apellido = cliente.Apellido;
-                existingCliente.Provincia = cliente.Provincia;
-                existingCliente.Canton = cliente.Canton;
-                existingCliente.Distrito = cliente.Distrito;
-                existingCliente.DineroCompradoTotal = cliente.DineroCompradoTotal;
-                existingCliente.DineroCompradoUltimoAnio = cliente.DineroCompradoUltimoAnio;
-                existingCliente.DineroCompradoUltimosSeisMeses = cliente.DineroCompradoUltimosSeisMeses;
-                _cache.Set(ClienteCacheKey, clientes, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60)));
-                return RedirectToAction(nameof(Index));
+                bool updated = _clienteService.Update(cliente);
+                if (updated)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("", "No se pudo actualizar el cliente");
             }
-
-            ModelState.AddModelError("", "Cliente no encontrado");
             return View(cliente);
         }
 
         public IActionResult Delete(string id)
         {
-            var clientes = _cache.Get<List<Cliente>>(ClienteCacheKey);
-            var cliente = clientes?.FirstOrDefault(c => c.Identificacion == id);
-            if (cliente != null)
+            bool deleted = _clienteService.Delete(id);
+            if (!deleted)
             {
-                clientes.Remove(cliente);
-                _cache.Set(ClienteCacheKey, clientes, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(60)));
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-
-            ModelState.AddModelError("", "Cliente no encontrado");
-            return RedirectToAction(nameof(Index), new { error = "ClienteNotFound" });
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Search(string searchTerm)
         {
-            var clientes = _cache.Get<List<Cliente>>(ClienteCacheKey);
-            var filteredClientes = string.IsNullOrWhiteSpace(searchTerm)
-                ? clientes
-                : clientes.Where(c => c.Nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-                            || c.Apellido.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-                            || c.Identificacion.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            var filteredClientes = _clienteService.Search(searchTerm);
 
+            // Verificar si la solicitud es un AJAX request para devolver JSON
             if (HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return Json(filteredClientes);
             }
 
+            // Devolver la vista 'Index' con los clientes filtrados
             return View("Index", filteredClientes);
         }
+
     }
 }
