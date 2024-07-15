@@ -1,6 +1,9 @@
 @model List<MokkilicoresExpress.Models.Cliente>
+@using System.Text.Json
+
 @{
     ViewData["Title"] = "Clientes";
+    var jsonClientes = JsonSerializer.Serialize(Model);
 }
 
 <h1>Clientes</h1>
@@ -39,9 +42,9 @@
                     <td>@cliente.DineroCompradoUltimoAnio</td>
                     <td>@cliente.DineroCompradoUltimosSeisMeses</td>
                     <td>
-                        <a href="@Url.Action("Details", "Cliente", new { id = cliente.Identificacion })" class="btn btn-info">Detalles</a>
-                        <a href="@Url.Action("Edit", "Cliente", new { id = cliente.Identificacion })" class="btn btn-primary">Editar</a>
-                        <a href="@Url.Action("Delete", "Cliente", new { id = cliente.Identificacion })" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este cliente?');">Eliminar</a>
+                        <a href="@Url.Action("Details", "Cliente", new { id = cliente.Id })" class="btn btn-info">Detalles</a>
+                        <a href="@Url.Action("Edit", "Cliente", new { id = cliente.Id })" class="btn btn-primary">Editar</a>
+                        <a href="@Url.Action("Delete", "Cliente", new { id = cliente.Id })" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este cliente?');">Eliminar</a>
                     </td>
                 </tr>
             }
@@ -73,9 +76,9 @@
                                     <td>${cliente.dineroCompradoUltimoAnio}</td>
                                     <td>${cliente.dineroCompradoUltimosSeisMeses}</td>
                                     <td>
-                                        <a href="/Cliente/Details/${cliente.identificacion}" class="btn btn-info">Detalles</a>
-                                        <a href="/Cliente/Edit/${cliente.identificacion}" class="btn btn-primary">Editar</a>
-                                        <a href="/Cliente/Delete/${cliente.identificacion}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este cliente?');">Eliminar</a>
+                                        <a href="/Cliente/Details/${cliente.id}" class="btn btn-info">Detalles</a>
+                                        <a href="/Cliente/Edit/${cliente.id}" class="btn btn-primary">Editar</a>
+                                        <a href="/Cliente/Delete/${cliente.id}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este cliente?');">Eliminar</a>
                                     </td>
                                 </tr>`;
                     });

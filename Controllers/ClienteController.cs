@@ -1,21 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
 using MokkilicoresExpress.Models;
-using MokkilicoresExpress.Services;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace MokkilicoresExpress.Controllers
 {
     public class ClienteController : Controller
     {
-        private readonly ClienteService _clienteService;
+        private readonly HttpClient _httpClient;
 
-        public ClienteController(ClienteService clienteService)
+        public ClienteController(IHttpClientFactory httpClientFactory)
         {
-            _clienteService = clienteService;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var clientes = _clienteService.GetAll();
+            var clientes = await _httpClient.GetFromJsonAsync<List<Cliente>>("/api/Cliente");
             return View(clientes);
         }
 
@@ -25,26 +27,21 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Cliente cliente)
+        public async Task<IActionResult> Create(Cliente cliente)
         {
-            try
+            var response = await _httpClient.PostAsJsonAsync("/api/Cliente", cliente);
+            if (response.IsSuccessStatusCode)
             {
-                if (ModelState.IsValid)
-                {
-                    _clienteService.Add(cliente);
-                    return RedirectToAction(nameof(Index));
-                }
+                return RedirectToAction(nameof(Index));
             }
-            catch (System.Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-            }
+            ModelState.AddModelError("", "Error al crear cliente");
             return View(cliente);
         }
 
-        public IActionResult Details(string id)
+
+        public async Task<IActionResult> Details(int id)
         {
-            var cliente = _clienteService.GetById(id);
+            var cliente = await _httpClient.GetFromJsonAsync<Cliente>($"/api/Cliente/{id}");
             if (cliente == null)
             {
                 return NotFound();
@@ -52,9 +49,9 @@ namespace MokkilicoresExpress.Controllers
             return View(cliente);
         }
 
-        public IActionResult Edit(string id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var cliente = _clienteService.GetById(id);
+            var cliente = await _httpClient.GetFromJsonAsync<Cliente>($"/api/Cliente/{id}");
             if (cliente == null)
             {
                 return NotFound();
@@ -63,33 +60,38 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Cliente cliente)
+        public async Task<IActionResult> Edit(Cliente cliente)
         {
-            if (ModelState.IsValid)
+            var response = await _httpClient.PutAsJsonAsync($"/api/Cliente/{cliente.Id}", cliente);
+            if (response.IsSuccessStatusCode)
             {
-                bool updated = _clienteService.Update(cliente);
-                if (updated)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("", "No se pudo actualizar el cliente");
+                return RedirectToAction(nameof(Index));
             }
+            ModelState.AddModelError("", "Error al editar cliente");
             return View(cliente);
         }
 
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(int id)
         {
-            bool deleted = _clienteService.Delete(id);
-            if (!deleted)
+            var response = await _httpClient.DeleteAsync($"/api/Cliente/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
+            ModelState.AddModelError("", "Error al eliminar cliente");
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Search(string searchTerm)
+        public async Task<IActionResult> Search(string searchTerm)
         {
-            var filteredClientes = _clienteService.Search(searchTerm);
+            var clientes = await _httpClient.GetFromJsonAsync<List<Cliente>>("/api/Cliente");
+
+            // Realizar la búsqueda si searchTerm no está vacío
+            var filteredClientes = string.IsNullOrWhiteSpace(searchTerm) ? 
+                clientes : 
+                clientes.Where(c => c.Nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                    c.Apellido.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                    c.Identificacion.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
 
             // Verificar si la solicitud es un AJAX request para devolver JSON
             if (HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -101,5 +103,6 @@ namespace MokkilicoresExpress.Controllers
             return View("Index", filteredClientes);
         }
 
+        
     }
 }

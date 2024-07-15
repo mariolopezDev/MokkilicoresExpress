@@ -4,6 +4,7 @@ namespace MokkilicoresExpress.Models
 {
     public class Cliente
     {
+        public int Id { get; set; }
         [Required]
         public string Identificacion { get; set; }
         [Required]

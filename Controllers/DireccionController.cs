@@ -1,21 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
 using MokkilicoresExpress.Models;
-using MokkilicoresExpress.Services;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace MokkilicoresExpress.Controllers
 {
     public class DireccionController : Controller
     {
-        private readonly DireccionService _direccionService;
+        private readonly HttpClient _httpClient;
 
-        public DireccionController(DireccionService direccionService)
+        public DireccionController(IHttpClientFactory httpClientFactory)
         {
-            _direccionService = direccionService;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var direcciones = _direccionService.GetAll();
+            var direcciones = await _httpClient.GetFromJsonAsync<List<Direccion>>("/api/Direccion");
             return View(direcciones);
         }
 
@@ -25,19 +27,20 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Direccion direccion)
+        public async Task<IActionResult> Create(Direccion direccion)
         {
-            if (ModelState.IsValid)
+            var response = await _httpClient.PostAsJsonAsync("/api/Direccion", direccion);
+            if (response.IsSuccessStatusCode)
             {
-                _direccionService.Add(direccion);
                 return RedirectToAction(nameof(Index));
             }
+            ModelState.AddModelError("", "Error al crear dirección");
             return View(direccion);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var direccion = _direccionService.GetById(id);
+            var direccion = await _httpClient.GetFromJsonAsync<Direccion>($"/api/Direccion/{id}");
             if (direccion == null)
             {
                 return NotFound();
@@ -45,9 +48,9 @@ namespace MokkilicoresExpress.Controllers
             return View(direccion);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var direccion = _direccionService.GetById(id);
+            var direccion = await _httpClient.GetFromJsonAsync<Direccion>($"/api/Direccion/{id}");
             if (direccion == null)
             {
                 return NotFound();
@@ -56,27 +59,43 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Direccion direccion)
+        public async Task<IActionResult> Edit(Direccion direccion)
         {
-            if (ModelState.IsValid && _direccionService.Update(direccion))
+            var response = await _httpClient.PutAsJsonAsync($"/api/Direccion/{direccion.Id}", direccion);
+            if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction(nameof(Index));
             }
+            ModelState.AddModelError("", "Error al editar dirección");
             return View(direccion);
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (_direccionService.Delete(id))
+            var response = await _httpClient.DeleteAsync($"/api/Direccion/{id}");
+            if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction(nameof(Index));
             }
-            return NotFound();
+            ModelState.AddModelError("", "Error al eliminar dirección");
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Search(string searchTerm)
+        public async Task<IActionResult> Search(string searchTerm)
         {
-            var filteredDirecciones = _direccionService.Search(searchTerm);
+            var direcciones = await _httpClient.GetFromJsonAsync<List<Direccion>>("/api/Direccion");
+
+            var filteredDirecciones = string.IsNullOrWhiteSpace(searchTerm) ? 
+                direcciones : 
+                direcciones.Where(d => d.Provincia.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                       d.Canton.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                       d.Distrito.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(filteredDirecciones);
+            }
+
             return View("Index", filteredDirecciones);
         }
     }

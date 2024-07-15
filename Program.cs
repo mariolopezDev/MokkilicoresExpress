@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Memory;
-using MokkilicoresExpress.Models; 
-using MokkilicoresExpress.Services; 
+using MokkilicoresExpress.Models;
+using MokkilicoresExpress.Services;
 using System.Collections.Generic;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +21,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
-// servicio de acceso al contexto HTTP
+// Servicio de acceso al contexto HTTP
 builder.Services.AddHttpContextAccessor();
+
+// Configurar HttpClient con BaseAddress
+var URI_ADDRESS = "http://localhost:5045";
+
+builder.Services.AddHttpClient("ApiClient", client =>
+{
+    client.BaseAddress = new Uri(URI_ADDRESS);
+});
 
 // Registro Services como singleton para que se comparta entre los controladores
 builder.Services.AddSingleton<InventarioService>();
@@ -45,7 +52,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -54,22 +60,17 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-
-
 // Inicializar la caché con datos de prueba
 InitializeCache(app.Services);
 
-
 app.Run();
 
-
 // Inicializar la caché con datos de prueba
-// Este método se ejecuta al inicio de la aplicación para cargar datos de prueba en la caché    
+// Este método se ejecuta al inicio de la aplicación para cargar datos de prueba en la caché
 void InitializeCache(IServiceProvider services)
 {
     var cache = services.GetRequiredService<IMemoryCache>();

@@ -1,23 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using MokkilicoresExpress.Models;
-using Microsoft.AspNetCore.Authorization;
-using MokkilicoresExpress.Services;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace MokkilicoresExpress.Controllers
 {
     public class InventarioController : Controller
     {
-        private readonly InventarioService _inventarioService;
+        private readonly HttpClient _httpClient;
 
-        public InventarioController(InventarioService inventarioService)
+        public InventarioController(IHttpClientFactory httpClientFactory)
         {
-            _inventarioService = inventarioService;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var inventario = _inventarioService.GetAll();
-            return View(inventario);
+            var inventarios = await _httpClient.GetFromJsonAsync<List<Inventario>>("/api/Inventario");
+            return View(inventarios);
         }
 
         public IActionResult Create()
@@ -26,77 +27,74 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
-        [Authorize]
-        public IActionResult Create(Inventario inventario)
+        public async Task<IActionResult> Create(Inventario inventario)
         {
-            if (ModelState.IsValid)
+            var response = await _httpClient.PostAsJsonAsync("/api/Inventario", inventario);
+            if (response.IsSuccessStatusCode)
             {
-                _inventarioService.Add(inventario);
                 return RedirectToAction(nameof(Index));
+            }
+            ModelState.AddModelError("", "Error al crear inventario");
+            return View(inventario);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var inventario = await _httpClient.GetFromJsonAsync<Inventario>($"/api/Inventario/{id}");
+            if (inventario == null)
+            {
+                return NotFound();
             }
             return View(inventario);
         }
-       public IActionResult Details(int id)
-        {
-            var item = _inventarioService.GetById(id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            return View(item);
-        }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var item = _inventarioService.GetById(id);
-            if (item == null)
+            var inventario = await _httpClient.GetFromJsonAsync<Inventario>($"/api/Inventario/{id}");
+            if (inventario == null)
             {
                 return NotFound();
             }
-            return View(item);
+            return View(inventario);
         }
 
         [HttpPost]
-        [Authorize]
-        public IActionResult Edit(Inventario inventario)
+        public async Task<IActionResult> Edit(Inventario inventario)
         {
-            if (ModelState.IsValid)
+            var response = await _httpClient.PutAsJsonAsync($"/api/Inventario/{inventario.Id}", inventario);
+            if (response.IsSuccessStatusCode)
             {
-                bool updated = _inventarioService.Update(inventario.Id, inventario);
-                if (updated)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("", "No se pudo actualizar el inventario");
+                return RedirectToAction(nameof(Index));
             }
+            ModelState.AddModelError("", "Error al editar inventario");
             return View(inventario);
         }
 
-        [Authorize]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            bool deleted = _inventarioService.Delete(id);
-            if (!deleted)
+            var response = await _httpClient.DeleteAsync($"/api/Inventario/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
+            ModelState.AddModelError("", "Error al eliminar inventario");
             return RedirectToAction(nameof(Index));
         }
 
-        // Procesa la búsqueda de un artículo de inventario
-        public IActionResult Search(string searchTerm)
+        public async Task<IActionResult> Search(string searchTerm)
         {
-            // Usar el servicio para obtener los elementos filtrados
-            var filteredItems = _inventarioService.SearchInventory(searchTerm);
+            var inventarios = await _httpClient.GetFromJsonAsync<List<Inventario>>("/api/Inventario");
 
-            // Verificar si la solicitud es un AJAX request para devolver JSON
+            var filteredInventarios = string.IsNullOrWhiteSpace(searchTerm) ? 
+                inventarios : 
+                inventarios.Where(i => i.TipoLicor.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
             if (HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return Json(filteredItems);
+                return Json(filteredInventarios);
             }
 
-            // Devolver la vista 'Index' con los elementos filtrados
-            return View("Index", filteredItems);
+            return View("Index", filteredInventarios);
         }
     }
 }
