@@ -1,24 +1,23 @@
-@model List<MokkilicoresExpress.Models.Pedido>
+@model List<MokkilicoresExpress.Models.ViewModels.PedidoDetailsViewModel>
+@using System.Text.Json
+
 @{
     ViewData["Title"] = "Pedidos";
+    var jsonPedidos = JsonSerializer.Serialize(Model);
 }
 
 <h1>Pedidos</h1>
+<input type="text" id="searchTermPedido" class="form-control mb-3" placeholder="Buscar por estado, producto, etc." onkeyup="searchPedido()" />
 
-<!-- Formulario de búsqueda dinámica -->
-<input type="text" id="searchTermPedido" class="form-control mb-3" placeholder="Buscar por ID de pedido..." onkeyup="searchPedido()" />
-
-<!-- Botón para crear un nuevo pedido -->
 <div class="mb-4">
     <a href="@Url.Action("Create", "Pedido")" class="btn btn-success">Crear Nuevo Pedido</a>
 </div>
 
-<!-- Tabla de pedidos -->
 <table class="table table-striped" id="pedidoTable">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Producto ID</th>
+            <th>Cliente</th>
+            <th>Producto</th>
             <th>Cantidad</th>
             <th>Costo Sin IVA</th>
             <th>Costo Total</th>
@@ -28,18 +27,18 @@
     </thead>
     <tbody>
         @if (Model.Any()) {
-            foreach (var pedido in Model) {
+            foreach (var item in Model) {
                 <tr>
-                    <td>@pedido.Id</td>
-                    <td>@pedido.ProductoId</td>
-                    <td>@pedido.Cantidad</td>
-                    <td>@pedido.CostoSinIVA.ToString("C")</td>
-                    <td>@pedido.CostoTotal.ToString("C")</td>
-                    <td>@pedido.Estado</td>
+                    <td>@item.Cliente.Nombre @item.Cliente.Apellido</td>
+                    <td>@item.Inventario.TipoLicor</td>
+                    <td>@item.Pedido.Cantidad</td>
+                    <td>@item.Pedido.CostoSinIVA</td>
+                    <td>@item.Pedido.CostoTotal</td>
+                    <td>@item.Pedido.Estado</td>
                     <td>
-                        <a href="@Url.Action("Details", "Pedido", new { id = pedido.Id })" class="btn btn-info">Detalles</a>
-                        <a href="@Url.Action("Edit", "Pedido", new { id = pedido.Id })" class="btn btn-primary">Editar</a>
-                        <a href="@Url.Action("Delete", "Pedido", new { id = pedido.Id })" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este pedido?');">Eliminar</a>
+                        <a href="@Url.Action("Details", "Pedido", new { id = item.Pedido.Id })" class="btn btn-info">Detalles</a>
+                        <a href="@Url.Action("Edit", "Pedido", new { id = item.Pedido.Id })" class="btn btn-primary">Editar</a>
+                        <a href="@Url.Action("Delete", "Pedido", new { id = item.Pedido.Id })" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este pedido?');">Eliminar</a>
                     </td>
                 </tr>
             }
@@ -61,11 +60,11 @@
                 } else {
                     data.forEach(function(pedido) {
                         rows += `<tr>
-                                    <td>${pedido.id}</td>
-                                    <td>${pedido.productoId}</td>
+                                    <td>${pedido.cliente.nombre} ${pedido.cliente.apellido}</td>
+                                    <td>${pedido.inventario.tipoLicor}</td>
                                     <td>${pedido.cantidad}</td>
-                                    <td>${pedido.costoSinIVA.toFixed(2)}</td>
-                                    <td>${pedido.costoTotal.toFixed(2)}</td>
+                                    <td>${pedido.costoSinIVA}</td>
+                                    <td>${pedido.costoTotal}</td>
                                     <td>${pedido.estado}</td>
                                     <td>
                                         <a href="/Pedido/Details/${pedido.id}" class="btn btn-info">Detalles</a>

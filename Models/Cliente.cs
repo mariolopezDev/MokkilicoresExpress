@@ -19,5 +19,8 @@ namespace MokkilicoresExpress.Models
         public decimal DineroCompradoTotal { get; set; }
         public decimal DineroCompradoUltimoAnio { get; set; }
         public decimal DineroCompradoUltimosSeisMeses { get; set; }
+
+        public string NombreCompleto => $"{Nombre} {Apellido}";
+
     }
 }

@@ -1,13 +1,20 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Memory;
 using MokkilicoresExpress.Models;
-using MokkilicoresExpress.Services;
-using System.Collections.Generic;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Agregar servicios al contenedor de servicios
 builder.Services.AddControllersWithViews();
+
+// Proveedores de logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.AddEventSourceLogger();
+
+builder.Services.AddRazorPages();
+
 // Agregar servicio de memoria caché
 builder.Services.AddMemoryCache();
 // Configurar autenticación con cookies
@@ -31,17 +38,6 @@ builder.Services.AddHttpClient("ApiClient", client =>
 {
     client.BaseAddress = new Uri(URI_ADDRESS);
 });
-
-// Registro Services como singleton para que se comparta entre los controladores
-builder.Services.AddSingleton<InventarioService>();
-builder.Services.AddSingleton<ClienteService>();
-builder.Services.AddSingleton<PedidoService>();
-builder.Services.AddSingleton<DireccionService>();
-// NOTA: Cambiar a AddScoped en el futuro cuando se implemente la bases de datos y cuando gestión del estado de sesión sea necesaria.
-// AddScoped proporciona una instancia por solicitud
-// builder.Services.AddScoped<InventarioService>();
-// builder.Services.AddScoped<ClienteService>();
-// builder.Services.AddScoped<PedidoService>();
 
 var app = builder.Build();
 

@@ -13,8 +13,12 @@ else
     <form asp-action="Edit" method="post">
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
-            <label for="ProductoId">Producto ID</label>
-            <input asp-for="ProductoId" class="form-control" required>
+            <label for="ClienteId">Cliente ID</label>
+            <input asp-for="ClienteId" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="InventarioId">Producto ID</label>
+            <input asp-for="InventarioId" class="form-control" required>
         </div>
         <div class="form-group">
             <label for="Cantidad">Cantidad</label>
