@@ -22,21 +22,39 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Inventario" asp-action="Index">Inventario</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Cliente" asp-action="Index">Clientes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Pedido" asp-action="Index">Pedidos</a>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Direccion" asp-action="Index">Direcciones</a>
+                            }
+                            else
+                            {
+                                <span class="nav-link text-muted">Direcciones</span>
+                            }
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Inventario" asp-action="Index">Inventario</a>
+                        </li>
+                        <li class="nav-item">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Pedido" asp-action="Index">Pedidos</a>
+                            }
+                            else
+                            {
+                                <span class="nav-link text-muted">Pedidos</span>
+                            }
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post">
-                <button type="submit" class="btn btn-warning">Cerrar Sesión (@User.Identity.Name)</button>
-            </form>
-                               
+                                    <button type="submit" class="btn btn-warning">Cerrar Sesión (@User.Identity.Name)</button>
+                                </form>
                             </li>
                         }
                         else
@@ -55,7 +73,6 @@
             @RenderBody()
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - MokkilicoresExpress - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>

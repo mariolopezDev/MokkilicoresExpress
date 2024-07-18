@@ -22,7 +22,36 @@ namespace MokkilicoresExpress.Controllers
         public async Task<IActionResult> Index()
         {
             var direcciones = await _httpClient.GetFromJsonAsync<List<Direccion>>("/api/Direccion");
+            
+            var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!User.IsInRole("Admin"))
+            {
+                // Buscar el cliente correspondiente en la caché usando la identificación del usuario
+                var clientes = await GetClientesFromCacheOrApiAsync();
+                var cliente = clientes?.FirstOrDefault(c => c.Identificacion == userIdentificacion);
+                
+                if (cliente != null)
+                {
+                    direcciones = direcciones?.Where(d => d.ClienteId == cliente.Id).ToList();
+                }
+                else
+                {
+                    direcciones = new List<Direccion>(); // No hay direcciones para mostrar si no se encuentra el cliente
+                }
+            }
+
             return View(direcciones);
+        }
+
+        private async Task<List<Cliente>> GetClientesFromCacheOrApiAsync()
+        {
+            if (!_cache.TryGetValue(ClienteCacheKey, out List<Cliente> clientes))
+            {
+                clientes = await _httpClient.GetFromJsonAsync<List<Cliente>>("/api/Cliente");
+                var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
+                _cache.Set(ClienteCacheKey, clientes, cacheEntryOptions);
+            }
+            return clientes;
         }
 
         public IActionResult Create()
@@ -38,10 +67,22 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Direccion direccion)
         {
             if (ModelState.IsValid)
             {
+                var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var clientes = await GetClientesFromCacheOrApiAsync();
+                var cliente = clientes?.FirstOrDefault(c => c.Identificacion == userIdentificacion);
+
+                if (cliente == null)
+                {
+                    return Unauthorized();
+                }
+
+                direccion.ClienteId = cliente.Id;
+
                 var response = await _httpClient.PostAsJsonAsync("/api/Direccion", direccion);
                 if (response.IsSuccessStatusCode)
                 {
@@ -52,7 +93,7 @@ namespace MokkilicoresExpress.Controllers
 
             return View(direccion);
         }
-
+        [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
             var direccion = await _httpClient.GetFromJsonAsync<Direccion>($"/api/Direccion/{id}");
@@ -61,8 +102,11 @@ namespace MokkilicoresExpress.Controllers
                 return NotFound();
             }
 
-            var clienteId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(clienteId) || direccion.ClienteId != int.Parse(clienteId))
+            var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var clientes = await GetClientesFromCacheOrApiAsync();
+            var cliente = clientes?.FirstOrDefault(c => c.Identificacion == userIdentificacion);
+
+            if (cliente == null || (direccion.ClienteId != cliente.Id && !User.IsInRole("Admin")))
             {
                 return Unauthorized();
             }
@@ -70,12 +114,27 @@ namespace MokkilicoresExpress.Controllers
             return View(direccion);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(Direccion direccion)
+        [HttpPost("edit/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Direccion direccion)
         {
+            if (id != direccion.Id)
+            {
+                return BadRequest();
+            }
+
             if (ModelState.IsValid)
             {
-                var response = await _httpClient.PutAsJsonAsync($"/api/Direccion/{direccion.Id}", direccion);
+                var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var clientes = await GetClientesFromCacheOrApiAsync();
+                var cliente = clientes?.FirstOrDefault(c => c.Identificacion == userIdentificacion);
+
+                if (cliente == null || (direccion.ClienteId != cliente.Id && !User.IsInRole("Admin")))
+                {
+                    return Unauthorized();
+                }
+
+                var response = await _httpClient.PutAsJsonAsync($"/api/Direccion/{id}", direccion);
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction(nameof(Index));
@@ -86,6 +145,7 @@ namespace MokkilicoresExpress.Controllers
             return View(direccion);
         }
 
+        [HttpGet("details/{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var direccion = await _httpClient.GetFromJsonAsync<Direccion>($"/api/Direccion/{id}");
@@ -94,8 +154,11 @@ namespace MokkilicoresExpress.Controllers
                 return NotFound();
             }
 
-            var clienteId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(clienteId) || direccion.ClienteId != int.Parse(clienteId))
+            var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var clientes = await GetClientesFromCacheOrApiAsync();
+            var cliente = clientes?.FirstOrDefault(c => c.Identificacion == userIdentificacion);
+
+            if (cliente == null || (direccion.ClienteId != cliente.Id && !User.IsInRole("Admin")))
             {
                 return Unauthorized();
             }
@@ -111,8 +174,11 @@ namespace MokkilicoresExpress.Controllers
                 return NotFound();
             }
 
-            var clienteId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(clienteId) || direccion.ClienteId != int.Parse(clienteId))
+            var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var clientes = await GetClientesFromCacheOrApiAsync();
+            var cliente = clientes?.FirstOrDefault(c => c.Identificacion == userIdentificacion);
+
+            if (cliente == null || (direccion.ClienteId != cliente.Id && !User.IsInRole("Admin")))
             {
                 return Unauthorized();
             }
@@ -122,7 +188,6 @@ namespace MokkilicoresExpress.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-
             ModelState.AddModelError("", "Error al eliminar la dirección");
             return RedirectToAction(nameof(Index));
         }

@@ -3,71 +3,95 @@
 }
 
 <div class="container mt-5">
-    <h1 class="display-4 text-center">Bienvenido a Mokkilicores Express</h1>
-    <p class="lead text-center">Administra eficientemente tu negocio.</p>
-    <p class="text-center">Puedes iniciar sesión para acceder a todas las funcionalidades usando Usuario: 88889999 Key: 88889999adA</p>
-    <p class="text-center">O puedes navegar como invitado pero no podras agregar nuevos articulos o pedidos.</p>
-    <p class="text-center">Esto es una version de prueba, accesos por roles y la autenticación no están implementados al 100%.</p>
+    <h1 class="display-4 text-center mb-4">Bienvenido a Mokkilicores Express</h1>
+    <p class="lead text-center mb-5">Administra eficientemente tu negocio de licores.</p>
+
+    <div class="card mb-5">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Información de Acceso</h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text">Para acceder a todas las funcionalidades, inicia sesión con:</p>
+            <p class="card-text text-center"><strong>Usuario:</strong> admin <strong>Contraseña:</strong> admin</p>
+            <p class="card-text">Nota: La contraseña por defecto para nuevos usuarios será su Identificación + las dos primeras letras en minúscula de su apellido más la primera letra en mayúscula de su nombre.</p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h4 class="mb-3">Gestión de Usuarios</h4>
+            <ul class="list-group">
+                <li class="list-group-item">Solo puedes editar tu propio perfil de cliente (excepto el admin).</li>
+                <li class="list-group-item">Puedes agregar direcciones solo después de iniciar sesión, únicamente para tu perfil.</li>
+                <li class="list-group-item">El admin puede borrar cualquier dirección.</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h4 class="mb-3">Gestión de Inventario y Pedidos</h4>
+            <ul class="list-group">
+                <li class="list-group-item">Cualquier usuario autenticado puede agregar y editar inventario.</li>
+                <li class="list-group-item">Solo el admin puede borrar elementos del inventario.</li>
+                <li class="list-group-item">Para realizar un pedido, el usuario debe tener al menos una dirección principal.</li>
+            </ul>
+        </div>
+    </div>
 
     <!-- Área de autenticación -->
     <div class="text-right mb-4">
         <div id="auth-status"></div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-md-3 mb-3 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-body">
-                    <h5 class="card-title">Gestionar Inventario</h5>
-                    <p class="card-text">Administra todos los productos almacenados en tus bodegas.</p>
-                    <a href="/Inventario" class="btn btn-primary">Inventario</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-body">
+    <h3 class="text-center mb-4">Funcionalidades Principales</h3>
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Gestionar Clientes</h5>
-                    <p class="card-text">Visualiza y edita la información de tus clientes.</p>
-                    <a href="/Cliente" class="btn btn-primary">Clientes</a>
+                    <p class="card-text flex-grow-1">Visualiza y edita la información de tus clientes.</p>
+                    <a href="/Cliente" class="btn btn-primary mt-auto">Clientes</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-body">
-                    <h5 class="card-title">Gestionar Pedidos</h5>
-                    <p class="card-text">Controla todos los pedidos y gestiona su entrega.</p>
-                    <a href="/Pedido" class="btn btn-primary">Pedidos</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-body">
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Gestionar Direcciones</h5>
-                    <p class="card-text">Administra las direcciones asociadas a los clientes.</p>
-                    <a href="/Direccion" class="btn btn-primary">Direcciones</a>
+                    <p class="card-text flex-grow-1">Administra las direcciones asociadas a los clientes.</p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a href="/Direccion" class="btn btn-primary mt-auto">Direcciones</a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary mt-auto" disabled>Direcciones</button>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Gestionar Inventario</h5>
+                    <p class="card-text flex-grow-1">Administra todos los productos almacenados en tus bodegas.</p>
+                    <a href="/Inventario" class="btn btn-primary mt-auto">Inventario</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Gestionar Pedidos</h5>
+                    <p class="card-text flex-grow-1">Controla todos los pedidos y gestiona su entrega.</p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a href="/Pedido" class="btn btn-primary mt-auto">Pedidos</a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary mt-auto" disabled>Pedidos</button>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const jwtToken = document.cookie.split('; ').find(row => row.startsWith('jwt='));
-        const authStatus = document.getElementById('auth-status');
-
-        if (jwtToken) {
-            authStatus.innerHTML = `
-                <p class="lead">Hola, usuario autenticado!</p>
-                <form method="post" action="/Account/Logout">
-                    <button type="submit" class="btn btn-warning">Cerrar Sesión</button>
-                </form>
-            `;
-        } else {
-            authStatus.innerHTML = '<a href="/Account/Login" class="btn btn-success">Iniciar Sesión</a>';
-        }
-    });
-</script>

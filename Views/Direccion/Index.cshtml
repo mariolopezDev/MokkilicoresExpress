@@ -7,6 +7,8 @@
 }
 
 <h1>Direcciones</h1>
+<input type="text" id="searchTermDireccion" class="form-control mb-3" placeholder="Buscar por provincia, cantón o distrito..." onkeyup="searchDireccion()" />
+
 <div class="mb-4">
     <a href="@Url.Action("Create", "Direccion")" class="btn btn-success">Crear Nueva Dirección</a>
 </div>
@@ -47,3 +49,36 @@
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        function searchDireccion() {
+            var searchTerm = $('#searchTermDireccion').val();
+            $.get('@Url.Action("Search", "Direccion")', { searchTerm: searchTerm }, function(data) {
+                var rows = "";
+                if (!data.length) {
+                    rows += '<tr><td colspan="8" class="text-center">No se encontraron resultados.</td></tr>';
+                } else {
+                    data.forEach(function(direccion) {
+                        rows += `<tr>
+                                    <td>${direccion.clienteId}</td>
+                                    <td>${direccion.provincia}</td>
+                                    <td>${direccion.canton}</td>
+                                    <td>${direccion.distrito}</td>
+                                    <td><a href="${direccion.puntoEnWaze}" target="_blank">${direccion.puntoEnWaze}</a></td>
+                                    <td><input type="checkbox" ${direccion.esCondominio ? "checked" : ""} disabled /></td>
+                                    <td><input type="checkbox" ${direccion.esPrincipal ? "checked" : ""} disabled /></td>
+                                    <td>
+                                        <a href="/Direccion/Details/${direccion.id}" class="btn btn-info">Detalles</a>
+                                        <a href="/Direccion/Edit/${direccion.id}" class="btn btn-primary">Editar</a>
+                                        <a href="/Direccion/Delete/${direccion.id}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar esta dirección?');">Eliminar</a>
+                                    </td>
+                                </tr>`;
+                    });
+                }
+                $('#direccionTable tbody').html(rows);
+            });
+        }
+    </script>
+}
