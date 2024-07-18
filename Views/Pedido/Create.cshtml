@@ -10,6 +10,12 @@
         </select>
     </div>
     <div class="form-group">
+        <label for="DireccionId">Dirección</label>
+        <select asp-for="Pedido.DireccionId" class="form-control" asp-items="@(new SelectList(Model.Clientes.FirstOrDefault(c => c.Id == Model.Pedido.ClienteId)?.Direcciones, "Id", "Provincia"))" required>
+            <option value="">Seleccione una dirección</option>
+        </select>
+    </div>
+    <div class="form-group">
         <label for="InventarioId">Producto</label>
         <select asp-for="Pedido.InventarioId" class="form-control" asp-items="@(new SelectList(Model.Inventarios, "Id", "TipoLicor"))" required>
             <option value="">Seleccione un producto</option>
@@ -40,6 +46,19 @@
             if (!clienteId || !inventarioId) {
                 alert('Debe seleccionar un cliente y un producto.');
                 return false;
+            }
+        document.querySelector('select[name="Pedido.ClienteId"]').addEventListener('change', function () {
+            const clienteId = this.value;
+            if (clienteId) {
+                fetch(`/api/Direccion/Cliente/${clienteId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const direccionSelect = document.querySelector('select[name="Pedido.DireccionId"]');
+                        direccionSelect.innerHTML = '<option value="">Seleccione una dirección</option>';
+                        data.forEach(direccion => {
+                            direccionSelect.innerHTML += `<option value="${direccion.id}">${direccion.provincia}, ${direccion.canton}, ${direccion.distrito}</option>`;
+                        });
+                    });
             }
         });
     </script>

@@ -6,8 +6,8 @@ OUTPUT_FILE="all_files_content.txt"
 # Initialize the output file
 echo "File names/paths and their content" > $OUTPUT_FILE
 
-# Find all .cs and .json files excluding specific directories
-find . -type f \( -name "*.cs" -o -name "*.json" \) ! -path "./bin/*" ! -path "./obj/*" ! -path "./Debug/*" | while read -r FILE; do
+# Find all .cs and .json files excluding the obj directory
+find . -type f \( -name "*.cs" -o -name "*.json" \) ! -path "./obj/*" | while read -r FILE; do
   echo "Processing file: $FILE"
   # Print the file name/path
   echo "Filename: $FILE" >> $OUTPUT_FILE

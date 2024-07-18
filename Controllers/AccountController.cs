@@ -1,21 +1,21 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using MokkilicoresExpress.Models;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
-using Microsoft.Extensions.Caching.Memory;
-
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace MokkilicoresExpress.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IMemoryCache _cache;
-        private const string ClienteCacheKey = "Clientes";
+        private readonly HttpClient _httpClient;
 
-        public AccountController(IMemoryCache cache)
+        public AccountController(IHttpClientFactory httpClientFactory)
         {
-            _cache = cache;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         [HttpGet]
@@ -25,40 +25,61 @@ namespace MokkilicoresExpress.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string clientId, string password)
+        public async Task<IActionResult> Login(string identificacion, string password)
         {
-            var clientes = _cache.Get<List<Cliente>>(ClienteCacheKey);
-            var cliente = clientes?.FirstOrDefault(c => c.Identificacion == clientId);
-            if (cliente == null || !ValidatePassword(cliente, password))
+            var loginRequest = new { Identificacion = identificacion, Password = password };
+            var response = await _httpClient.PostAsJsonAsync("/api/Account/login", loginRequest);
+
+            if (response.IsSuccessStatusCode)
             {
-                ViewBag.ErrorMessage = "Credenciales inválidas";
-                return View();
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+                if (result == null || string.IsNullOrEmpty(result.Token))
+                {
+                    ViewBag.ErrorMessage = "Error en la respuesta del servidor.";
+                    return View();
+                }
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, result.Identificacion ?? string.Empty),
+                    new Claim(ClaimTypes.Role, result.Role ?? string.Empty),
+                    new Claim(ClaimTypes.Name, result.Identificacion ?? string.Empty)
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties();
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                HttpContext.Response.Cookies.Append("jwt", result.Token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Lax,
+                    Expires = DateTime.UtcNow.AddHours(1)
+                });
+
+                return RedirectToAction("Index", "Home");
             }
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, $"{cliente.Nombre} {cliente.Apellido}"),
-                new Claim(ClaimTypes.NameIdentifier, cliente.Identificacion)
-            };
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-
-            return RedirectToAction("Index", "Home");
+            ViewBag.ErrorMessage = "Credenciales inválidas";
+            return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
+            HttpContext.Response.Cookies.Delete("jwt");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
 
-        private bool ValidatePassword(Cliente cliente, string password)
+        public class LoginResponse
         {
-            var expectedPassword = cliente.Identificacion + cliente.Nombre.Substring(0, 2).ToLower() + cliente.Apellido[0].ToString().ToUpper();
-            return password == expectedPassword;
+            public string Token { get; set; }
+            public string Identificacion { get; set; }
+            public string Role { get; set; }
         }
     }
 }

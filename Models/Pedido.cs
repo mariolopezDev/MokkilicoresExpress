@@ -11,6 +11,9 @@ namespace MokkilicoresExpress.Models
         
         [Required]
         public int InventarioId { get; set; }
+
+        [Required]
+        public int DireccionId { get; set; }
         
         [Required]
         public int Cantidad { get; set; }

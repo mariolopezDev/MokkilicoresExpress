@@ -77,9 +77,22 @@ namespace MokkilicoresExpress.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            ModelState.AddModelError("", "Error al eliminar inventario");
+            else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                ModelState.AddModelError("", "No tienes permiso para eliminar este inventario.");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                ModelState.AddModelError("", "Inventario no encontrado.");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Error al eliminar inventario.");
+            }
+
             return RedirectToAction(nameof(Index));
         }
+
 
         public async Task<IActionResult> Search(string searchTerm)
         {

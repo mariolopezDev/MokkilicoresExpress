@@ -1,34 +1,32 @@
 @model MokkilicoresExpress.Models.Direccion
 
-<h1>Agregar Nueva Dirección</h1>
+<h1>Crear Nueva Dirección</h1>
 
 <form asp-action="Create" method="post">
-    <div class="form-group">
-        <label for="ClienteId">Cliente ID</label>
-        <input type="text" class="form-control" id="ClienteId" name="ClienteId" required>
-    </div>
+    <input type="hidden" asp-for="ClienteId" />
     <div class="form-group">
         <label for="Provincia">Provincia</label>
-        <input type="text" class="form-control" id="Provincia" name="Provincia" required>
+        <input asp-for="Provincia" class="form-control" required />
     </div>
     <div class="form-group">
         <label for="Canton">Cantón</label>
-        <input type="text" class="form-control" id="Canton" name="Canton" required>
+        <input asp-for="Canton" class="form-control" required />
     </div>
     <div class="form-group">
         <label for="Distrito">Distrito</label>
-        <input type="text" class="form-control" id="Distrito" name="Distrito" required>
+        <input asp-for="Distrito" class="form-control" required />
     </div>
     <div class="form-group">
-        <label for="PuntoEnWaze">Punto en Waze (URL)</label>
-        <input type="url" class="form-control" id="PuntoEnWaze" name="PuntoEnWaze" required>
+        <label for="PuntoEnWaze">Punto en Waze</label>
+        <input asp-for="PuntoEnWaze" class="form-control" />
     </div>
     <div class="form-group">
-        <label for="EsCondominio">Es Condominio</label>
-        <select class="form-control" id="EsCondominio" name="EsCondominio" required>
-            <option value="true">Sí</option>
-            <option value="false">No</option>
-        </select>
+        <label for="EsCondominio">¿Es Condominio?</label>
+        <input asp-for="EsCondominio" class="form-control" type="checkbox" />
     </div>
-    <button type="submit" class="btn btn-primary">Agregar</button>
+    <div class="form-group">
+        <label for="EsPrincipal">¿Es Dirección Principal?</label>
+        <input asp-for="EsPrincipal" class="form-control" type="checkbox" />
+    </div>
+    <button type="submit" class="btn btn-primary">Crear</button>
 </form>

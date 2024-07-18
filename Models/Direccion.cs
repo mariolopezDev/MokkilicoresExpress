@@ -1,16 +1,13 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MokkilicoresExpress.Models
 {
     public class Direccion
     {
-        [Key]
         public int Id { get; set; }
 
-        [ForeignKey("Cliente")]
+        [Required]
         public int ClienteId { get; set; }
-        public Cliente Cliente { get; set; }
 
         [Required]
         public string Provincia { get; set; }
@@ -22,8 +19,13 @@ namespace MokkilicoresExpress.Models
         public string Distrito { get; set; }
 
         [Required]
-        public string PuntoEnWaze { get; set; } // URL al punto en Waze
+        [Url]
+        public string PuntoEnWaze { get; set; }
 
+        [Required]
         public bool EsCondominio { get; set; }
+
+        [Required]
+        public bool EsPrincipal { get; set; }
     }
 }

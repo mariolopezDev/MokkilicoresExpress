@@ -11,21 +11,11 @@
 
     <!-- Área de autenticación -->
     <div class="text-right mb-4">
-        @if (User.Identity.IsAuthenticated)
-        {
-            <p class="lead">Hola, @User.Identity.Name!</p>
-            <form asp-controller="Account" asp-action="Logout" method="post">
-                <button type="submit" class="btn btn-warning">Cerrar Sesión</button>
-            </form>
-        }
-        else
-        {
-            <a href="/Account/Login" class="btn btn-success">Iniciar Sesión</a>
-        }
+        <div id="auth-status"></div>
     </div>
 
     <div class="row mt-4">
-        <div class="col-md-4 mb-3 d-flex align-items-stretch">
+        <div class="col-md-3 mb-3 d-flex align-items-stretch">
             <div class="card w-100">
                 <div class="card-body">
                     <h5 class="card-title">Gestionar Inventario</h5>
@@ -34,7 +24,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-3 d-flex align-items-stretch">
+        <div class="col-md-3 mb-3 d-flex align-items-stretch">
             <div class="card w-100">
                 <div class="card-body">
                     <h5 class="card-title">Gestionar Clientes</h5>
@@ -43,7 +33,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-3 d-flex align-items-stretch">
+        <div class="col-md-3 mb-3 d-flex align-items-stretch">
             <div class="card w-100">
                 <div class="card-body">
                     <h5 class="card-title">Gestionar Pedidos</h5>
@@ -52,5 +42,32 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3 mb-3 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h5 class="card-title">Gestionar Direcciones</h5>
+                    <p class="card-text">Administra las direcciones asociadas a los clientes.</p>
+                    <a href="/Direccion" class="btn btn-primary">Direcciones</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const jwtToken = document.cookie.split('; ').find(row => row.startsWith('jwt='));
+        const authStatus = document.getElementById('auth-status');
+
+        if (jwtToken) {
+            authStatus.innerHTML = `
+                <p class="lead">Hola, usuario autenticado!</p>
+                <form method="post" action="/Account/Logout">
+                    <button type="submit" class="btn btn-warning">Cerrar Sesión</button>
+                </form>
+            `;
+        } else {
+            authStatus.innerHTML = '<a href="/Account/Login" class="btn btn-success">Iniciar Sesión</a>';
+        }
+    });
+</script>
