@@ -51,9 +51,6 @@
             <th>Identificación</th>
             <th>Nombre</th>
             <th>Apellido</th>
-            <th>Provincia</th>
-            <th>Cantón</th>
-            <th>Distrito</th>
             <th>Compras Históricas</th>
             <th>Compras 12 Meses</th>
             <th>Compras 6 Meses</th>
@@ -67,9 +64,6 @@
                     <td>@cliente.Identificacion</td>
                     <td>@cliente.Nombre</td>
                     <td>@cliente.Apellido</td>
-                    <td>@cliente.Provincia</td>
-                    <td>@cliente.Canton</td>
-                    <td>@cliente.Distrito</td>
                     <td>@cliente.DineroCompradoTotal</td>
                     <td>@cliente.DineroCompradoUltimoAnio</td>
                     <td>@cliente.DineroCompradoUltimosSeisMeses</td>
@@ -94,16 +88,13 @@
             $.get('@Url.Action("Search", "Cliente")', { searchTerm: searchTerm }, function(data) {
                 var rows = "";
                 if (!data.length) {
-                    rows += '<tr><td colspan="10" class="text-center">No se encontraron resultados.</td></tr>';
+                    rows += '<tr><td colspan="7" class="text-center">No se encontraron resultados.</td></tr>';
                 } else {
                     data.forEach(function(cliente) {
                         rows += `<tr>
                                     <td>${cliente.identificacion}</td>
                                     <td>${cliente.nombre}</td>
                                     <td>${cliente.apellido}</td>
-                                    <td>${cliente.provincia}</td>
-                                    <td>${cliente.canton}</td>
-                                    <td>${cliente.distrito}</td>
                                     <td>${cliente.dineroCompradoTotal}</td>
                                     <td>${cliente.dineroCompradoUltimoAnio}</td>
                                     <td>${cliente.dineroCompradoUltimosSeisMeses}</td>

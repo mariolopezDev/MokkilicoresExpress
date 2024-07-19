@@ -20,13 +20,16 @@
         <label for="PuntoEnWaze">Punto en Waze</label>
         <input asp-for="PuntoEnWaze" class="form-control" />
     </div>
-    <div class="form-group">
+    <div class="form-group" style="margin-top: 10px;">
         <label for="EsCondominio">¿Es Condominio?</label>
-        <input asp-for="EsCondominio" class="form-control" type="checkbox" />
+        <input asp-for="EsCondominio" type="checkbox" />
     </div>
     <div class="form-group">
-        <label for="EsPrincipal">¿Es Dirección Principal?</label>
-        <input asp-for="EsPrincipal" class="form-control" type="checkbox" />
+        <label hidden for="EsPrincipal">¿Es Dirección Principal?</label>
+        <input asp-for="EsPrincipal" hidden type="checkbox"  />
     </div>
-    <button type="submit" class="btn btn-primary">Crear</button>
+    <div class="form-group" style="margin-top: 20px;">
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </div>
+
 </form>
