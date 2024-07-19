@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Security.Claims;
 
 namespace MokkilicoresExpress.Controllers
 {
@@ -26,6 +27,7 @@ namespace MokkilicoresExpress.Controllers
             var pedidos = await _httpClient.GetFromJsonAsync<List<Pedido>>("/api/Pedido");
             
             var clienteIds = pedidos.Select(p => p.ClienteId).Distinct();
+            Console.WriteLine($"ClienteIDS: {clienteIds}"); // Log para debug
             var inventarioIds = pedidos.Select(p => p.InventarioId).Distinct();
             
             var clientes = await _httpClient.GetFromJsonAsync<List<Cliente>>($"/api/Cliente?ids={string.Join(",", clienteIds)}");
@@ -44,13 +46,21 @@ namespace MokkilicoresExpress.Controllers
         public async Task<IActionResult> Create()
         {
             _logger.LogInformation("Cargando formulario para crear un nuevo pedido.");
+
+            
             var clientes = await _httpClient.GetFromJsonAsync<List<Cliente>>("/api/Cliente");
             var inventarios = await _httpClient.GetFromJsonAsync<List<Inventario>>("/api/Inventario");
+
+            Console.WriteLine("User: " + User.FindFirstValue(ClaimTypes.NameIdentifier));
+            Console.WriteLine("clientes: " + clientes);
+            var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var direcciones = await _httpClient.GetFromJsonAsync<List<Direccion>>($"/api/Direccion/Usuario/{userIdentificacion}");
 
             var viewModel = new CreatePedidoViewModel
             {
                 Clientes = clientes,
                 Inventarios = inventarios,
+                Direcciones = direcciones,
                 Pedido = new Pedido()
             };
 

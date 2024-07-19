@@ -24,19 +24,26 @@ namespace MokkilicoresExpress.Controllers
             var direcciones = await _httpClient.GetFromJsonAsync<List<Direccion>>("/api/Direccion");
             
             var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Console.WriteLine($"User Identificacion: {userIdentificacion}"); // Log para debug
+
             if (!User.IsInRole("Admin"))
             {
                 // Buscar el cliente correspondiente en la caché usando la identificación del usuario
                 var clientes = await GetClientesFromCacheOrApiAsync();
                 var cliente = clientes?.FirstOrDefault(c => c.Identificacion == userIdentificacion);
-                
+                Console.WriteLine($"Cliente encontrado: {cliente?.Id} - {cliente?.Identificacion}"); // Log para debug
+
                 if (cliente != null)
                 {
                     direcciones = direcciones?.Where(d => d.ClienteId == cliente.Id).ToList();
+                    Console.WriteLine($"d.clienteId: {direcciones?.FirstOrDefault()?.ClienteId}"); // Log para debug
+                    Console.WriteLine($"Direcciones filtradas: {direcciones?.Count}"); // Log para debug
+                    Console.WriteLine($"Direcciones filtradas: {direcciones?.Count}"); // Log para debug
                 }
                 else
                 {
                     direcciones = new List<Direccion>(); // No hay direcciones para mostrar si no se encuentra el cliente
+                     Console.WriteLine("No se encontró el cliente"); // Log para debug
                 }
             }
 
@@ -96,13 +103,17 @@ namespace MokkilicoresExpress.Controllers
         [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
-            var direccion = await _httpClient.GetFromJsonAsync<Direccion>($"/api/Direccion/{id}");
+            
+
+            var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var direccion = await _httpClient.GetFromJsonAsync<Direccion>($"/api/Direccion/{userIdentificacion}");
+            
             if (direccion == null)
             {
                 return NotFound();
             }
 
-            var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var clientes = await GetClientesFromCacheOrApiAsync();
             var cliente = clientes?.FirstOrDefault(c => c.Identificacion == userIdentificacion);
 

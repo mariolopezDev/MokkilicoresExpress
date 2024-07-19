@@ -27,5 +27,7 @@ namespace MokkilicoresExpress.Models
 
         [Required]
         public bool EsPrincipal { get; set; }
+        public string DireccionCompleta => $"{Id} - {Provincia}, {Canton}, {Distrito}";
+
     }
 }

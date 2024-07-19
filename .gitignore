@@ -2,6 +2,9 @@
 bin/
 obj/
 
+# Tests
+test.api.sh
+
 # User-specific files
 *.rsuser
 *.suo
