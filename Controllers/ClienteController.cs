@@ -17,24 +17,51 @@ namespace MokkilicoresExpress.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var clientes = await _httpClient.GetFromJsonAsync<List<Cliente>>("/api/Cliente");
-            return View(clientes);
+            try
+            {
+                var response = await _httpClient.GetAsync("/api/Cliente");
+                if (response.IsSuccessStatusCode)
+                {
+                    var clientes = await response.Content.ReadFromJsonAsync<List<Cliente>>();
+                    return View(clientes);
+                }
+                else
+                {
+                    TempData["ErrorMensaje"] = "Error al obtener clientes: {response.StatusCode}";
+                    return View(new List<Cliente>());
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMensaje"] = "Error al obtener clientes: {ex.Message}";
+                return View(new List<Cliente>());
+            }
         }
 
         public IActionResult Create()
         {
             return View();
         }
-
+        
         [HttpPost]
         public async Task<IActionResult> Create(Cliente cliente)
         {
-            var response = await _httpClient.PostAsJsonAsync("/api/Cliente", cliente);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return RedirectToAction(nameof(Index));
+                var response = await _httpClient.PostAsJsonAsync("/api/Cliente", cliente);
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<Cliente>();
+                    TempData["SuccessMessage"] = "Cliente creado exitosamente";
+                    return RedirectToAction(nameof(Index));
+                }
+                var errorResult = await response.Content.ReadFromJsonAsync<Cliente>();
+                ModelState.AddModelError("", $"Error al crear cliente: {errorResult.Nombre}");
             }
-            ModelState.AddModelError("", "Error al crear cliente");
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Solo administradores pueden crear clientes");
+            }
             return View(cliente);
         }
 
@@ -67,20 +94,36 @@ namespace MokkilicoresExpress.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
+
+
+            TempData["SuccessMessage"] = "Error al editar, solo el usuario dueño de la cuenta o el admin puede editar";
+                    return RedirectToAction(nameof(Index));
             ModelState.AddModelError("", "Error al editar cliente");
-            return View(cliente);
+            //return View(cliente);
         }
 
         public async Task<IActionResult> Delete(int id)
-        {
-            var response = await _httpClient.DeleteAsync($"/api/Cliente/{id}");
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            ModelState.AddModelError("", "Error al eliminar cliente");
-            return RedirectToAction(nameof(Index));
-        }
+                {
+                    try
+                    {
+                        var response = await _httpClient.DeleteAsync($"/api/Cliente/{id}");
+                        if (response.IsSuccessStatusCode)
+                        {
+                            TempData["SuccessMessage"] = "Cliente eliminado exitosamente";
+                        }
+                        else
+                        {
+                            var errorResult = await response.Content.ReadFromJsonAsync<Cliente>();
+                            TempData["ErrorMessage"] = "Error al eliminar cliente, solo el admin puede eliminar";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["ErrorMessage"] = $"Error al eliminar cliente: {ex.Message}";
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+
 
         public async Task<IActionResult> Search(string searchTerm)
         {
