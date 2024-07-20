@@ -26,12 +26,13 @@
         <input asp-for="Pedido.Cantidad" class="form-control" required />
     </div>
     <div class="form-group">
-        <label for="CostoSinIVA">Costo Sin IVA</label>
-        <input asp-for="Pedido.CostoSinIVA" class="form-control" required />
-    </div>
-    <div class="form-group">
         <label for="Estado">Estado</label>
-        <input asp-for="Pedido.Estado" class="form-control" required />
+        <select asp-for="Pedido.Estado" class="form-control" required>
+            <option value="En proceso">En proceso</option>
+            <option value="Facturado">Facturado</option>
+            <option value="Por entregar">Por entregar</option>
+            <option value="Entregado">Entregado</option>
+        </select>
     </div>
     <button type="submit" class="btn btn-primary">Crear</button>
 </form>

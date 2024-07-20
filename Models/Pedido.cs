@@ -20,10 +20,11 @@ namespace MokkilicoresExpress.Models
         
         [Required]
         public decimal CostoSinIVA { get; set; }
+        public decimal PorcentajeDescuento { get; set; }
         
         public decimal CostoTotal 
         { 
-            get { return CostoSinIVA * 1.13M; } // IVA de 13% 
+            get { return CostoSinIVA - (CostoSinIVA * PorcentajeDescuento) * 0.13m; }
         }
         
         [Required]

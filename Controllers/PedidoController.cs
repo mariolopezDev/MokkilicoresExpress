@@ -23,16 +23,77 @@ namespace MokkilicoresExpress.Controllers
 
         public async Task<IActionResult> Index()
         {
-            _logger.LogInformation("Obteniendo la lista de pedidos.");
-            var pedidos = await _httpClient.GetFromJsonAsync<List<Pedido>>("/api/Pedido");
-            
-            var clienteIds = pedidos.Select(p => p.ClienteId).Distinct();
-            Console.WriteLine($"ClienteIDS: {clienteIds}"); // Log para debug
+            var isAdmin = User.IsInRole("Admin");
+            List<Pedido> pedidos;
+
+            if (isAdmin)
+            {
+                // Si es admin, obtener todos los pedidos
+                try
+                {
+                    pedidos = await _httpClient.GetFromJsonAsync<List<Pedido>>("/api/Pedido");
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    _logger.LogWarning("No se encontraron pedidos.");
+                    pedidos = new List<Pedido>();
+                }
+            }
+            else
+            {
+                // Si no es admin, obtener solo los pedidos del usuario actual
+                var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                Cliente cliente;
+                try
+                {
+                    cliente = await _httpClient.GetFromJsonAsync<Cliente>($"/api/Cliente/Usuario/{userIdentificacion}");
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    _logger.LogWarning("Cliente no encontrado para el usuario con identificación: {UserIdentificacion}", userIdentificacion);
+                    return NotFound("Cliente no encontrado");
+                }
+
+                try
+                {
+                    pedidos = await _httpClient.GetFromJsonAsync<List<Pedido>>($"/api/Pedido/Cliente/{cliente.Id}");
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    _logger.LogWarning("No se encontraron pedidos para el cliente con ID: {ClienteId}", cliente.Id);
+                    pedidos = new List<Pedido>();
+                }
+            }
+
+            if (!pedidos.Any())
+            {
+                return View(new List<PedidoDetailsViewModel>());
+            }
+
             var inventarioIds = pedidos.Select(p => p.InventarioId).Distinct();
-            
-            var clientes = await _httpClient.GetFromJsonAsync<List<Cliente>>($"/api/Cliente?ids={string.Join(",", clienteIds)}");
-            var inventarios = await _httpClient.GetFromJsonAsync<List<Inventario>>($"/api/Inventario?ids={string.Join(",", inventarioIds)}");
-            
+            List<Inventario> inventarios;
+            try
+            {
+                inventarios = await _httpClient.GetFromJsonAsync<List<Inventario>>($"/api/Inventario?ids={string.Join(",", inventarioIds)}");
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _logger.LogWarning("No se encontraron inventarios para los IDs: {InventarioIds}", string.Join(", ", inventarioIds));
+                inventarios = new List<Inventario>();
+            }
+
+            var clienteIds = pedidos.Select(p => p.ClienteId).Distinct();
+            List<Cliente> clientes;
+            try
+            {
+                clientes = await _httpClient.GetFromJsonAsync<List<Cliente>>($"/api/Cliente?ids={string.Join(",", clienteIds)}");
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _logger.LogWarning("No se encontraron clientes para los IDs: {ClienteIds}", string.Join(", ", clienteIds));
+                clientes = new List<Cliente>();
+            }
+
             var viewModel = pedidos.Select(p => new PedidoDetailsViewModel
             {
                 Pedido = p,
@@ -48,27 +109,43 @@ namespace MokkilicoresExpress.Controllers
             _logger.LogInformation("Cargando formulario para crear un nuevo pedido.");
 
             var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var cliente = await _httpClient.GetFromJsonAsync<Cliente>($"/api/Cliente/Usuario/{userIdentificacion}");
+            Cliente cliente = null;
+            try
+            {
+                cliente = await _httpClient.GetFromJsonAsync<Cliente>($"/api/Cliente/Usuario/{userIdentificacion}");
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _logger.LogWarning("No se encontró cliente con identificación: {UserIdentificacion}", userIdentificacion);
+            }
+
             var clientes = new List<Cliente>();
             if (cliente != null)
             {
                 clientes.Add(cliente);
             }
-            else
-            {
-                Console.WriteLine("No se encontró cliente con identificación: " + userIdentificacion);
 
-            }
-            var inventarios = await _httpClient.GetFromJsonAsync<List<Inventario>>("/api/Inventario");
-            if (inventarios == null)
+            List<Inventario> inventarios;
+            try
             {
-                Console.WriteLine("No se encontraron inventarios.");
+                inventarios = await _httpClient.GetFromJsonAsync<List<Inventario>>("/api/Inventario");
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _logger.LogWarning("No se encontraron inventarios.");
+                inventarios = new List<Inventario>();
             }
 
-            Console.WriteLine("User: " + User.FindFirstValue(ClaimTypes.NameIdentifier));
-            Console.WriteLine("clientes: " + clientes);
-            //var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var direcciones = await _httpClient.GetFromJsonAsync<List<Direccion>>($"/api/Direccion/Usuario/{userIdentificacion}");
+            List<Direccion> direcciones;
+            try
+            {
+                direcciones = await _httpClient.GetFromJsonAsync<List<Direccion>>($"/api/Direccion/Usuario/{userIdentificacion}");
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _logger.LogWarning("No se encontraron direcciones para el usuario: {UserIdentificacion}", userIdentificacion);
+                direcciones = new List<Direccion>();
+            }
 
             var viewModel = new CreatePedidoViewModel
             {
@@ -76,7 +153,6 @@ namespace MokkilicoresExpress.Controllers
                 Inventarios = inventarios,
                 Direcciones = direcciones,
                 Pedido = new Pedido()
-
             };
 
             return View(viewModel);

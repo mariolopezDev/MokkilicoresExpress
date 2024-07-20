@@ -6,7 +6,8 @@
     var jsonPedidos = JsonSerializer.Serialize(Model);
 }
 
-<h1>Pedidos</h1>
+<h1>Pedidos de @Model.FirstOrDefault()?.Cliente.NombreCompleto</h2>
+
 <input type="text" id="searchTermPedido" class="form-control mb-3" placeholder="Buscar por estado, producto, etc." onkeyup="searchPedido()" />
 
 <div class="mb-4">

@@ -14,7 +14,7 @@ else
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
             <label for="ClienteId">Cliente ID</label>
-            <input asp-for="ClienteId" class="form-control" required>
+            <input asp-for="ClienteId" class="form-control" readonly>
         </div>
         <div class="form-group">
             <label for="InventarioId">Producto ID</label>
@@ -23,10 +23,6 @@ else
         <div class="form-group">
             <label for="Cantidad">Cantidad</label>
             <input asp-for="Cantidad" type="number" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="CostoSinIVA">Costo Sin IVA</label>
-            <input asp-for="CostoSinIVA" type="number" step="0.01" class="form-control" required>
         </div>
         <div class="form-group">
             <label for="Estado">Estado del Pedido</label>
