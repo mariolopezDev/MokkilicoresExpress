@@ -47,13 +47,27 @@ namespace MokkilicoresExpress.Controllers
         {
             _logger.LogInformation("Cargando formulario para crear un nuevo pedido.");
 
-            
-            var clientes = await _httpClient.GetFromJsonAsync<List<Cliente>>("/api/Cliente");
+            var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cliente = await _httpClient.GetFromJsonAsync<Cliente>($"/api/Cliente/Usuario/{userIdentificacion}");
+            var clientes = new List<Cliente>();
+            if (cliente != null)
+            {
+                clientes.Add(cliente);
+            }
+            else
+            {
+                Console.WriteLine("No se encontró cliente con identificación: " + userIdentificacion);
+
+            }
             var inventarios = await _httpClient.GetFromJsonAsync<List<Inventario>>("/api/Inventario");
+            if (inventarios == null)
+            {
+                Console.WriteLine("No se encontraron inventarios.");
+            }
 
             Console.WriteLine("User: " + User.FindFirstValue(ClaimTypes.NameIdentifier));
             Console.WriteLine("clientes: " + clientes);
-            var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //var userIdentificacion = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var direcciones = await _httpClient.GetFromJsonAsync<List<Direccion>>($"/api/Direccion/Usuario/{userIdentificacion}");
 
             var viewModel = new CreatePedidoViewModel
@@ -62,6 +76,7 @@ namespace MokkilicoresExpress.Controllers
                 Inventarios = inventarios,
                 Direcciones = direcciones,
                 Pedido = new Pedido()
+
             };
 
             return View(viewModel);
